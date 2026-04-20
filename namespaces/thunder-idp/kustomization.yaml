@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - pipeline.yaml
+  - project.yaml
+  - environments/development.yaml
+  - environments/staging.yaml
+  - environments/production.yaml
+  - components/thunder

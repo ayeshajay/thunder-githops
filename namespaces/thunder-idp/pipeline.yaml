@@ -1,0 +1,22 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: DeploymentPipeline
+metadata:
+  name: identity-platform-pipeline
+  namespace: thunder-idp
+  annotations:
+    openchoreo.dev/description: "Deployment pipeline for identity platform"
+    openchoreo.dev/display-name: "Identity Platform Pipeline"
+spec:
+  promotionPaths:
+    - sourceEnvironmentRef:
+        kind: Environment
+        name: development
+      targetEnvironmentRefs:
+        - kind: Environment
+          name: staging
+    - sourceEnvironmentRef:
+        kind: Environment
+        name: staging
+      targetEnvironmentRefs:
+        - kind: Environment
+          name: production

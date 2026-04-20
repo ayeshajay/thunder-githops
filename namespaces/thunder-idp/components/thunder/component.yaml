@@ -1,0 +1,26 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: Component
+metadata:
+  name: thunder
+  namespace: thunder-idp
+  annotations:
+    openchoreo.dev/description: "WSO2 Thunder Identity Management Service"
+    openchoreo.dev/display-name: "Thunder"
+spec:
+  owner:
+    projectName: identity-platform
+  componentType:
+    kind: ClusterComponentType
+    name: deployment/thunder
+  parameters:
+    image: "ghcr.io/asgardeo/thunder:latest"
+    runtime:
+      imagePullPolicy: "Always"
+      gate:
+        clientBase: "/gate"
+      console:
+        clientBase: "/console"
+        clientId: "CONSOLE"
+        scopes: '["openid", "profile", "email", "system"]'
+      dbType: "sqlite"
+      dbStorageSize: "1Gi"

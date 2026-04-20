@@ -1,0 +1,76 @@
+name: Generate ComponentRelease
+
+on:
+  workflow_dispatch:
+    inputs:
+      namespace:
+        description: "OC namespace (e.g. thunder-idp)"
+        required: true
+        default: "thunder-idp"
+      component:
+        description: "Component name (e.g. thunder)"
+        required: true
+        default: "thunder"
+
+jobs:
+  generate-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install occ CLI
+        run: |
+          curl -L https://nightly.link/openchoreo/openchoreo/workflows/build-and-test/main/occ.zip -o occ.zip
+          unzip occ.zip
+          sudo mv linux/amd64/occ /usr/local/bin/
+          rm -rf occ.zip darwin linux
+          occ version
+
+      - name: Generate ComponentRelease
+        id: generate
+        run: |
+          COMPONENT_DIR="namespaces/${{ github.event.inputs.namespace }}/components/${{ github.event.inputs.component }}"
+          occ componentrelease generate --all --mode file-system --path "$COMPONENT_DIR"
+
+          # Extract the generated ComponentRelease name
+          RELEASE_NAME=$(grep '^  name:' "$COMPONENT_DIR/component-release.yaml" | head -1 | awk '{print $2}')
+          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          echo "component_dir=$COMPONENT_DIR" >> $GITHUB_OUTPUT
+          echo "Generated ComponentRelease: $RELEASE_NAME"
+
+      - name: Update ReleaseBinding releaseName
+        run: |
+          RELEASE_BINDING="${{ steps.generate.outputs.component_dir }}/release-binding.yaml"
+          RELEASE_NAME="${{ steps.generate.outputs.release_name }}"
+          sed -i "s/^  releaseName:.*/  releaseName: $RELEASE_NAME/" "$RELEASE_BINDING"
+          echo "Updated ReleaseBinding to point to: $RELEASE_NAME"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release/${{ github.event.inputs.namespace }}-${{ github.event.inputs.component }}-${{ steps.generate.outputs.release_name }}
+          base: main
+          commit-message: "chore(${{ github.event.inputs.component }}): generate ComponentRelease ${{ steps.generate.outputs.release_name }}"
+          title: "chore(${{ github.event.inputs.component }}): generate ComponentRelease ${{ steps.generate.outputs.release_name }}"
+          body: |
+            ## Auto-generated ComponentRelease
+
+            **Namespace:** `${{ github.event.inputs.namespace }}`
+            **Component:** `${{ github.event.inputs.component }}`
+            **New Release:** `${{ steps.generate.outputs.release_name }}`
+
+            ### Changes
+            - Generated `component-release.yaml` from current `workload.yaml`
+            - Updated `release-binding.yaml` to point to `${{ steps.generate.outputs.release_name }}`
+
+            ### Review checklist
+            - [ ] Verify ComponentRelease content matches expected workload spec
+            - [ ] Verify ReleaseBinding points to the correct release name
+            - [ ] Merge to trigger Flux reconciliation
+          labels: automated,componentrelease

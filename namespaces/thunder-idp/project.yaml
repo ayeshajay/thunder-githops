@@ -1,0 +1,12 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: Project
+metadata:
+  name: identity-platform
+  namespace: thunder-idp
+  annotations:
+    openchoreo.dev/description: "Identity platform powered by WSO2 Thunder"
+    openchoreo.dev/display-name: "Identity Platform"
+spec:
+  deploymentPipelineRef:
+    kind: DeploymentPipeline
+    name: identity-platform-pipeline

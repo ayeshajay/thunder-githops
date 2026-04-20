@@ -1,0 +1,176 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: Workload
+metadata:
+  name: thunder
+  namespace: thunder-idp
+spec:
+  owner:
+    componentName: thunder
+    projectName: identity-platform
+  container:
+    image: ghcr.io/asgardeo/thunder:latest
+    env:
+      - key: SERVER_PORT
+        value: "8090"
+      - key: JWT_VALIDITY
+        value: "3600"
+      - key: OAUTH_REFRESH_TOKEN_VALIDITY
+        value: "86400"
+      - key: CACHE_SIZE
+        value: "10000"
+      - key: CACHE_TTL
+        value: "3600"
+      - key: CONSENT_ENABLED
+        value: "false"
+      - key: CONSENT_BASE_URL
+        value: "http://localhost:9090/api/v1"
+      - key: GATE_CLIENT_BASE
+        value: "/gate"
+      - key: CONSOLE_CLIENT_BASE
+        value: "/console"
+      - key: CONSOLE_CLIENT_ID
+        value: "CONSOLE"
+      - key: CONSOLE_SCOPES
+        value: '["openid", "profile", "email", "system"]'
+      - key: CORS_ALLOWED_ORIGINS
+        value: '["http://development-thunder-thunder.openchoreoapis.localhost:19080", "https://localhost:3000"]'
+      - key: GATE_CLIENT_PORT
+        value: "19080"
+      - key: GATE_CLIENT_SCHEME
+        value: "http"
+      - key: DB_CONFIG_PATH
+        value: "repository/database/configdb.db"
+      - key: DB_RUNTIME_PATH
+        value: "repository/database/runtimedb.db"
+      - key: DB_USER_PATH
+        value: "repository/database/userdb.db"
+      - key: CRYPTO_ENCRYPTION_KEY
+        value: "file://repository/resources/security/crypto.key"
+    files:
+      - key: wso2_cloud_theme.yaml
+        mountPath: /opt/thunder/repository/resources/themes
+        value: |
+          id: "d1e2f3a4-b5c6-7890-abcd-theme0000001"
+          displayName: "WSO2 Cloud Theme"
+          description: "Default theme for WSO2 Cloud login pages"
+          theme:
+            direction: "ltr"
+            defaultColorScheme: "light"
+            colorSchemes:
+              light:
+                colors:
+                  primary:
+                    main: "#fa7b3f"
+                    dark: "#e74420"
+                    contrastText: "#ffffff"
+                  secondary:
+                    main: "#1a1a2e"
+                    dark: "#0d0d1a"
+                    contrastText: "#ffffff"
+                  background:
+                    default: "#f7f8fb"
+                    paper: "#ffffff"
+                  text:
+                    primary: "#000000"
+                    secondary: "#494848"
+              dark:
+                colors:
+                  primary:
+                    main: "#fa7b3f"
+                    dark: "#e74420"
+                    contrastText: "#ffffff"
+                  secondary:
+                    main: "#ff9966"
+                    dark: "#fa7b3f"
+                    contrastText: "#000000"
+                  background:
+                    default: "#121212"
+                    paper: "#1e1e1e"
+                  text:
+                    primary: "#ffffff"
+                    secondary: "#cccccc"
+            shape:
+              borderRadius: 8
+            typography:
+              fontFamily: "'Inter Variable', sans-serif"
+              h1:
+                fontSize: "1.75rem"
+                fontWeight: 600
+                lineHeight: 1.3
+      - key: test_app.yaml
+        mountPath: /opt/thunder/repository/resources/applications
+        value: |
+          id: "c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f"
+          name: "WSO2 Cloud Console Revamped"
+          description: "WSO2 Cloud Console frontend application"
+          url: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080"
+          logo_url: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/assets/logo.svg"
+          is_registration_flow_enabled: false
+          certificate:
+            type: "NONE"
+            value: ""
+          inbound_auth_config:
+            - type: "oauth2"
+              config:
+                client_id: "CLOUD_CONSOLE"
+                redirect_uris:
+                  - "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback"
+                  - "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback"
+                grant_types:
+                  - "authorization_code"
+                  - "refresh_token"
+                response_types:
+                  - "code"
+                token_endpoint_auth_method: "none"
+                pkce_required: true
+                public_client: true
+                token:
+                  access_token:
+                    validity_period: 3600
+                    user_attributes:
+                      - "given_name"
+                      - "family_name"
+                      - "email"
+                      - "groups"
+                      - "name"
+                      - "roles"
+                      - "ouId"
+                      - "ouName"
+                      - "ouHandle"
+                  id_token:
+                    validity_period: 3600
+                    user_attributes:
+                      - "given_name"
+                      - "family_name"
+                      - "email"
+                      - "groups"
+                      - "name"
+                      - "ouId"
+                      - "ouName"
+                      - "ouHandle"
+                scope_claims:
+                  profile:
+                    - "name"
+                    - "given_name"
+                    - "family_name"
+                    - "picture"
+                    - "ouId"
+                    - "ouName"
+                    - "ouHandle"
+                  email:
+                    - "email"
+                    - "email_verified"
+                  phone:
+                    - "phone_number"
+                    - "phone_number_verified"
+                  group:
+                    - "groups"
+          allowed_user_types:
+            - "Customer"
+  endpoints:
+    api:
+      type: HTTP
+      port: 8090
+      displayName: "Thunder API"
+      visibility:
+        - external
