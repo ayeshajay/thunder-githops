@@ -1,6 +1,10 @@
 name: Generate ComponentRelease
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "namespaces/*/components/*/workload.yaml"
   workflow_dispatch:
     inputs:
       namespace:
@@ -26,14 +30,36 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Install occ CLI
         run: |
           curl -L https://nightly.link/openchoreo/openchoreo/workflows/build-and-test/main/occ.zip -o occ.zip
-          unzip occ.zip
-          sudo mv linux/amd64/occ /usr/local/bin/
-          rm -rf occ.zip darwin linux
+          unzip -p occ.zip linux/amd64/occ > occ
+          chmod +x occ
+          sudo mv occ /usr/local/bin/occ
+          rm -f occ.zip
           occ version
+
+      - name: Resolve inputs
+        id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # Derive namespace and component from changed workload.yaml path
+            CHANGED=$(git diff --name-only HEAD~1 HEAD | grep 'workload.yaml' | head -1)
+            # path: namespaces/<namespace>/components/<component>/workload.yaml
+            NAMESPACE=$(echo "$CHANGED" | cut -d'/' -f2)
+            COMPONENT=$(echo "$CHANGED" | cut -d'/' -f4)
+            PROJECT="identity-platform"
+          else
+            NAMESPACE="${{ github.event.inputs.namespace }}"
+            COMPONENT="${{ github.event.inputs.component }}"
+            PROJECT="${{ github.event.inputs.project }}"
+          fi
+          echo "namespace=$NAMESPACE" >> $GITHUB_OUTPUT
+          echo "component=$COMPONENT" >> $GITHUB_OUTPUT
+          echo "project=$PROJECT" >> $GITHUB_OUTPUT
 
       - name: Configure occ context
         run: |
@@ -49,14 +75,14 @@ jobs:
             - name: default
               controlplane: default
               credentials: default
-              namespace: ${{ github.event.inputs.namespace }}
-              project: ${{ github.event.inputs.project }}
+              namespace: ${{ steps.resolve.outputs.namespace }}
+              project: ${{ steps.resolve.outputs.project }}
           EOF
 
       - name: Generate ComponentRelease
         id: generate
         run: |
-          COMPONENT_DIR="namespaces/${{ github.event.inputs.namespace }}/components/${{ github.event.inputs.component }}"
+          COMPONENT_DIR="namespaces/${{ steps.resolve.outputs.namespace }}/components/${{ steps.resolve.outputs.component }}"
 
           # Snapshot existing files before generation
           BEFORE=$(ls "$COMPONENT_DIR"/*.yaml | sort)
@@ -98,15 +124,15 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: release/${{ github.event.inputs.namespace }}-${{ github.event.inputs.component }}-${{ steps.generate.outputs.release_name }}
+          branch: release/${{ steps.resolve.outputs.namespace }}-${{ steps.resolve.outputs.component }}-${{ steps.generate.outputs.release_name }}
           base: main
-          commit-message: "chore(${{ github.event.inputs.component }}): generate ComponentRelease ${{ steps.generate.outputs.release_name }}"
-          title: "chore(${{ github.event.inputs.component }}): generate ComponentRelease ${{ steps.generate.outputs.release_name }}"
+          commit-message: "chore(${{ steps.resolve.outputs.component }}): generate ComponentRelease ${{ steps.generate.outputs.release_name }}"
+          title: "chore(${{ steps.resolve.outputs.component }}): generate ComponentRelease ${{ steps.generate.outputs.release_name }}"
           body: |
             ## Auto-generated ComponentRelease
 
-            **Namespace:** `${{ github.event.inputs.namespace }}`
-            **Component:** `${{ github.event.inputs.component }}`
+            **Namespace:** `${{ steps.resolve.outputs.namespace }}`
+            **Component:** `${{ steps.resolve.outputs.component }}`
             **New Release:** `${{ steps.generate.outputs.release_name }}`
 
             ### Changes

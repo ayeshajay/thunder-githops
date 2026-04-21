@@ -3,5 +3,5 @@ kind: Kustomization
 resources:
   - component.yaml
   - workload.yaml
-  - component-release.yaml
+  - thunder-20260421-3.yaml
   - release-binding.yaml

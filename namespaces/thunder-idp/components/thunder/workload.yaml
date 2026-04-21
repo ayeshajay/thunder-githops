@@ -47,6 +47,56 @@ spec:
       - key: CRYPTO_ENCRYPTION_KEY
         value: "file://repository/resources/security/crypto.key"
     files:
+      - key: wso2_cloud_theme_v2.yaml
+        mountPath: /opt/thunder/repository/resources/themes
+        value: |
+          id: "d1e2f3a4-b5c6-7890-abcd-theme0000002"
+          displayName: "WSO2 Cloud Theme V2"
+          description: "Default theme for WSO2 Cloud login pages"
+          theme:
+            direction: "ltr"
+            defaultColorScheme: "light"
+            colorSchemes:
+              light:
+                colors:
+                  primary:
+                    main: "#fa7b3f"
+                    dark: "#e74420"
+                    contrastText: "#ffffff"
+                  secondary:
+                    main: "#1a1a2e"
+                    dark: "#0d0d1a"
+                    contrastText: "#ffffff"
+                  background:
+                    default: "#f7f8fb"
+                    paper: "#ffffff"
+                  text:
+                    primary: "#000000"
+                    secondary: "#494848"
+              dark:
+                colors:
+                  primary:
+                    main: "#fa7b3f"
+                    dark: "#e74420"
+                    contrastText: "#ffffff"
+                  secondary:
+                    main: "#ff9966"
+                    dark: "#fa7b3f"
+                    contrastText: "#000000"
+                  background:
+                    default: "#121212"
+                    paper: "#1e1e1e"
+                  text:
+                    primary: "#ffffff"
+                    secondary: "#cccccc"
+            shape:
+              borderRadius: 8
+            typography:
+              fontFamily: "'Inter Variable', sans-serif"
+              h1:
+                fontSize: "1.75rem"
+                fontWeight: 600
+                lineHeight: 1.3
       - key: wso2_cloud_theme.yaml
         mountPath: /opt/thunder/repository/resources/themes
         value: |
