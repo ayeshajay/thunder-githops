@@ -7,6 +7,10 @@ on:
         description: "OC namespace (e.g. thunder-idp)"
         required: true
         default: "thunder-idp"
+      project:
+        description: "OC project name (e.g. identity-platform)"
+        required: true
+        default: "identity-platform"
       component:
         description: "Component name (e.g. thunder)"
         required: true
@@ -31,24 +35,64 @@ jobs:
           rm -rf occ.zip darwin linux
           occ version
 
+      - name: Configure occ context
+        run: |
+          mkdir -p ~/.openchoreo
+          cat > ~/.openchoreo/config <<EOF
+          currentContext: default
+          controlplanes:
+            - name: default
+              url: http://localhost:8080
+          credentials:
+            - name: default
+          contexts:
+            - name: default
+              controlplane: default
+              credentials: default
+              namespace: ${{ github.event.inputs.namespace }}
+              project: ${{ github.event.inputs.project }}
+          EOF
+
       - name: Generate ComponentRelease
         id: generate
         run: |
           COMPONENT_DIR="namespaces/${{ github.event.inputs.namespace }}/components/${{ github.event.inputs.component }}"
-          occ componentrelease generate --all --mode file-system --path "$COMPONENT_DIR"
 
-          # Extract the generated ComponentRelease name
-          RELEASE_NAME=$(grep '^  name:' "$COMPONENT_DIR/component-release.yaml" | head -1 | awk '{print $2}')
+          # Snapshot existing files before generation
+          BEFORE=$(ls "$COMPONENT_DIR"/*.yaml | sort)
+
+          cd "$COMPONENT_DIR"
+          occ componentrelease generate --all --mode file-system
+          cd "$GITHUB_WORKSPACE"
+
+          # Find the newly generated file by comparing before/after
+          AFTER=$(ls "$COMPONENT_DIR"/*.yaml | sort)
+          NEW_FILE=$(comm -13 <(echo "$BEFORE") <(echo "$AFTER") | head -1)
+          NEW_FILENAME=$(basename "$NEW_FILE")
+
+          # Extract release name from the new file's metadata.name
+          RELEASE_NAME=$(awk '/^metadata:/{found=1} found && /^  name:/{print $2; exit}' "$NEW_FILE")
+
+          echo "new_file=$NEW_FILENAME" >> $GITHUB_OUTPUT
           echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
           echo "component_dir=$COMPONENT_DIR" >> $GITHUB_OUTPUT
-          echo "Generated ComponentRelease: $RELEASE_NAME"
+          echo "Generated ComponentRelease: $RELEASE_NAME ($NEW_FILENAME)"
 
-      - name: Update ReleaseBinding releaseName
+      - name: Update kustomization and ReleaseBinding
         run: |
-          RELEASE_BINDING="${{ steps.generate.outputs.component_dir }}/release-binding.yaml"
+          COMPONENT_DIR="${{ steps.generate.outputs.component_dir }}"
           RELEASE_NAME="${{ steps.generate.outputs.release_name }}"
-          sed -i "s/^  releaseName:.*/  releaseName: $RELEASE_NAME/" "$RELEASE_BINDING"
-          echo "Updated ReleaseBinding to point to: $RELEASE_NAME"
+          NEW_FILE="${{ steps.generate.outputs.new_file }}"
+
+          # Add new ComponentRelease file to kustomization.yaml
+          # Replace old component-release.yaml entry with the new generated file
+          sed -i "s|  - component-release.yaml|  - $NEW_FILE|" "$COMPONENT_DIR/kustomization.yaml"
+
+          # Update ReleaseBinding to point to new release
+          sed -i "s/^  releaseName:.*/  releaseName: $RELEASE_NAME/" "$COMPONENT_DIR/release-binding.yaml"
+
+          echo "Updated kustomization.yaml: component-release.yaml → $NEW_FILE"
+          echo "Updated ReleaseBinding releaseName → $RELEASE_NAME"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
