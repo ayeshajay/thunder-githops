@@ -101,7 +101,7 @@ spec:
         mountPath: /opt/thunder/repository/resources/applications
         value: |
           id: "c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f"
-          name: "WSO2 Cloud Console Revamped"
+          name: "WSO2 Cloud Console Revamped 123"
           description: "WSO2 Cloud Console frontend application"
           url: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080"
           logo_url: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/assets/logo.svg"

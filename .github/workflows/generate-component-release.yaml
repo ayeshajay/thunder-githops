@@ -7,6 +7,10 @@ on:
         description: "OC namespace (e.g. thunder-idp)"
         required: true
         default: "thunder-idp"
+      project:
+        description: "OC project name (e.g. identity-platform)"
+        required: true
+        default: "identity-platform"
       component:
         description: "Component name (e.g. thunder)"
         required: true
@@ -31,11 +35,31 @@ jobs:
           rm -rf occ.zip darwin linux
           occ version
 
+      - name: Configure occ context
+        run: |
+          mkdir -p ~/.openchoreo
+          cat > ~/.openchoreo/config <<EOF
+          currentContext: default
+          controlplanes:
+            - name: default
+              url: http://localhost:8080
+          credentials:
+            - name: default
+          contexts:
+            - name: default
+              controlplane: default
+              credentials: default
+              namespace: ${{ github.event.inputs.namespace }}
+              project: ${{ github.event.inputs.project }}
+          EOF
+
       - name: Generate ComponentRelease
         id: generate
         run: |
           COMPONENT_DIR="namespaces/${{ github.event.inputs.namespace }}/components/${{ github.event.inputs.component }}"
-          occ componentrelease generate --all --mode file-system --path "$COMPONENT_DIR"
+          cd "$COMPONENT_DIR"
+          occ componentrelease generate --all --mode file-system
+          cd "$GITHUB_WORKSPACE"
 
           # Extract the generated ComponentRelease name
           RELEASE_NAME=$(grep '^  name:' "$COMPONENT_DIR/component-release.yaml" | head -1 | awk '{print $2}')
