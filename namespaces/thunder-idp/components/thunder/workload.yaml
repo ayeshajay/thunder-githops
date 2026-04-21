@@ -51,7 +51,7 @@ spec:
         mountPath: /opt/thunder/repository/resources/themes
         value: |
           id: "d1e2f3a4-b5c6-7890-abcd-theme0000002"
-          displayName: "WSO2 Cloud Theme V4"
+          displayName: "WSO2 Cloud Theme V6"
           description: "Default theme for WSO2 Cloud login pages"
           theme:
             direction: "ltr"
