@@ -1,576 +1,196 @@
 {
   "resources": [
     {
-      "gvk": "openchoreo.dev/v1alpha1/ComponentRelease",
+      "gvk": "openchoreo.dev/v1alpha1/ReleaseBinding",
       "namespace": "thunder-idp",
-      "name": "thunder-v8",
-      "filePath": "/Users/ayeshaj/Documents/SRE/thunder/repos/thunder-githops/namespaces/thunder-idp/components/thunder/component-release.yaml",
+      "name": "thunder-dev",
+      "filePath": "/home/runner/work/thunder-githops/thunder-githops/namespaces/thunder-idp/components/thunder/release-binding.yaml",
       "object": {
         "apiVersion": "openchoreo.dev/v1alpha1",
-        "kind": "ComponentRelease",
+        "kind": "ReleaseBinding",
         "metadata": {
-          "name": "thunder-v8",
+          "name": "thunder-dev",
           "namespace": "thunder-idp"
         },
         "spec": {
-          "componentProfile": {
-            "parameters": {
-              "image": "ghcr.io/asgardeo/thunder:latest",
-              "runtime": {
-                "console": {
-                  "clientBase": "/console",
-                  "clientId": "CONSOLE",
-                  "scopes": "[\"openid\", \"profile\", \"email\", \"system\"]"
-                },
-                "dbStorageSize": "1Gi",
-                "dbType": "sqlite",
-                "gate": {
-                  "clientBase": "/gate"
-                },
-                "imagePullPolicy": "Always"
-              }
-            }
+          "componentTypeEnvironmentConfigs": {
+            "endpointVisibility": "external",
+            "gateClientHostname": "development-thunder-thunder-idp.openchoreoapis.localhost",
+            "replicas": 1,
+            "resourceLimitsCpu": "500m",
+            "resourceLimitsMemory": "512Mi",
+            "resourceRequestsCpu": "100m",
+            "resourceRequestsMemory": "128Mi",
+            "serverPublicUrl": "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080"
           },
+          "environment": "development",
+          "owner": {
+            "componentName": "thunder",
+            "projectName": "identity-platform"
+          },
+          "releaseName": "thunder-v8",
+          "state": "Active"
+        }
+      }
+    },
+    {
+      "gvk": "openchoreo.dev/v1alpha1/Component",
+      "namespace": "thunder-idp",
+      "name": "thunder",
+      "filePath": "/home/runner/work/thunder-githops/thunder-githops/namespaces/thunder-idp/components/thunder/component.yaml",
+      "object": {
+        "apiVersion": "openchoreo.dev/v1alpha1",
+        "kind": "Component",
+        "metadata": {
+          "annotations": {
+            "openchoreo.dev/description": "WSO2 Thunder Identity Management Service",
+            "openchoreo.dev/display-name": "Thunder"
+          },
+          "name": "thunder",
+          "namespace": "thunder-idp"
+        },
+        "spec": {
           "componentType": {
             "kind": "ClusterComponentType",
-            "name": "deployment/thunder",
-            "spec": {
-              "environmentConfigs": {
-                "openAPIV3Schema": {
-                  "properties": {
-                    "endpointVisibility": {
-                      "default": "external",
-                      "enum": [
-                        "external",
-                        "internal"
-                      ],
-                      "type": "string"
-                    },
-                    "gateClientHostname": {
-                      "default": "",
-                      "type": "string"
-                    },
-                    "replicas": {
-                      "default": 1,
-                      "type": "integer"
-                    },
-                    "resourceLimitsCpu": {
-                      "default": "500m",
-                      "type": "string"
-                    },
-                    "resourceLimitsMemory": {
-                      "default": "512Mi",
-                      "type": "string"
-                    },
-                    "resourceRequestsCpu": {
-                      "default": "100m",
-                      "type": "string"
-                    },
-                    "resourceRequestsMemory": {
-                      "default": "128Mi",
-                      "type": "string"
-                    },
-                    "serverPublicUrl": {
-                      "default": "",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                }
+            "name": "deployment/thunder"
+          },
+          "owner": {
+            "projectName": "identity-platform"
+          },
+          "parameters": {
+            "image": "ghcr.io/asgardeo/thunder:latest",
+            "runtime": {
+              "console": {
+                "clientBase": "/console",
+                "clientId": "CONSOLE",
+                "scopes": "[\"openid\", \"profile\", \"email\", \"system\"]"
               },
-              "parameters": {
-                "openAPIV3Schema": {
-                  "properties": {
-                    "image": {
-                      "default": "ghcr.io/asgardeo/thunder:latest",
-                      "type": "string"
-                    },
-                    "runtime": {
-                      "properties": {
-                        "console": {
-                          "properties": {
-                            "clientBase": {
-                              "default": "/console",
-                              "type": "string"
-                            },
-                            "clientId": {
-                              "default": "CONSOLE",
-                              "type": "string"
-                            },
-                            "scopes": {
-                              "default": "[\"openid\", \"profile\", \"email\"]",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        },
-                        "dbStorageSize": {
-                          "default": "1Gi",
-                          "type": "string"
-                        },
-                        "dbType": {
-                          "default": "sqlite",
-                          "enum": [
-                            "sqlite",
-                            "postgres"
-                          ],
-                          "type": "string"
-                        },
-                        "gate": {
-                          "properties": {
-                            "clientBase": {
-                              "default": "/gate",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        },
-                        "imagePullPolicy": {
-                          "default": "Always",
-                          "enum": [
-                            "Always",
-                            "IfNotPresent",
-                            "Never"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "type": "object"
-                    }
-                  },
-                  "type": "object"
-                }
+              "dbStorageSize": "1Gi",
+              "dbType": "sqlite",
+              "gate": {
+                "clientBase": "/gate"
               },
-              "resources": [
-                {
-                  "id": "sqlite-pvc",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "v1",
-                    "kind": "PersistentVolumeClaim",
-                    "metadata": {
-                      "name": "${metadata.componentName}-sqlite",
-                      "namespace": "${metadata.namespace}"
-                    },
-                    "spec": {
-                      "accessModes": [
-                        "ReadWriteOnce"
-                      ],
-                      "resources": {
-                        "requests": {
-                          "storage": "${parameters.runtime.dbStorageSize}"
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "id": "setup-job",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "batch/v1",
-                    "kind": "Job",
-                    "metadata": {
-                      "name": "${metadata.componentName}-setup",
-                      "namespace": "${metadata.namespace}"
-                    },
-                    "spec": {
-                      "backoffLimit": 3,
-                      "template": {
-                        "spec": {
-                          "containers": [
-                            {
-                              "command": [
-                                "sh",
-                                "-c",
-                                "./setup.sh \u0026\u0026 touch /opt/thunder/repository/database/.setup-complete"
-                              ],
-                              "env": "${configurations.configs.envs.map(e, {\"name\": e.name, \"value\": e.value}) + [{\"name\": \"WITH_CONSENT\", \"value\": \"false\"}]}\n",
-                              "image": "${parameters.image}",
-                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
-                              "name": "setup",
-                              "volumeMounts": [
-                                {
-                                  "mountPath": "/opt/thunder/repository/conf/deployment.yaml",
-                                  "name": "thunder-config",
-                                  "subPath": "deployment.yaml"
-                                },
-                                {
-                                  "mountPath": "/opt/thunder/repository/database",
-                                  "name": "sqlite-data"
-                                }
-                              ]
-                            }
-                          ],
-                          "initContainers": [
-                            {
-                              "args": [
-                                "if [ ! -f /data/.initialized ]; then\n  cp -r /opt/thunder/repository/database/* /data/\n  touch /data/.initialized\nfi\n"
-                              ],
-                              "command": [
-                                "sh",
-                                "-c"
-                              ],
-                              "image": "${parameters.image}",
-                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
-                              "name": "init-database",
-                              "volumeMounts": [
-                                {
-                                  "mountPath": "/data",
-                                  "name": "sqlite-data"
-                                }
-                              ]
-                            }
-                          ],
-                          "restartPolicy": "OnFailure",
-                          "volumes": [
-                            {
-                              "configMap": {
-                                "name": "${metadata.componentName}-config"
-                              },
-                              "name": "thunder-config"
-                            },
-                            {
-                              "name": "sqlite-data",
-                              "persistentVolumeClaim": {
-                                "claimName": "${metadata.componentName}-sqlite"
-                              }
-                            }
-                          ]
-                        }
-                      },
-                      "ttlSecondsAfterFinished": 300
-                    }
-                  }
-                },
-                {
-                  "id": "thunder-config",
-                  "includeWhen": "${parameters.runtime.dbType == 'sqlite'}",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "v1",
-                    "data": {
-                      "deployment.yaml": "server:\n  hostname: \"0.0.0.0\"\n  public_url: \"${environmentConfigs.serverPublicUrl}\"\n  port: ${workload.endpoints[\"api\"].port}\n  http_only: true\n\ngate_client:\n  hostname: \"${environmentConfigs.gateClientHostname}\"\n  port: {{.GATE_CLIENT_PORT}}\n  scheme: \"{{.GATE_CLIENT_SCHEME}}\"\n\ncrypto:\n  encryption:\n    key: \"{{.CRYPTO_ENCRYPTION_KEY}}\"\n\ndatabase:\n  config:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_CONFIG_PATH}}\"\n  runtime:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_RUNTIME_PATH}}\"\n  user:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_USER_PATH}}\"\n\ncache:\n  disabled: false\n  type: \"inmemory\"\n  size: {{.CACHE_SIZE}}\n  ttl: {{.CACHE_TTL}}\n  eviction_policy: \"LRU\"\n  cleanup_interval: 600\n\njwt:\n  validity_period: {{.JWT_VALIDITY}}\n\noauth:\n  refresh_token:\n    renew_on_grant: true\n    validity_period: {{.OAUTH_REFRESH_TOKEN_VALIDITY}}\n\ncors:\n  allowed_origins: {{.CORS_ALLOWED_ORIGINS}}\n\nconsent:\n  enabled: {{.CONSENT_ENABLED}}\n  base_url: \"{{.CONSENT_BASE_URL}}\"\n"
-                    },
-                    "kind": "ConfigMap",
-                    "metadata": {
-                      "name": "${metadata.componentName}-config",
-                      "namespace": "${metadata.namespace}"
-                    }
-                  }
-                },
-                {
-                  "id": "gate-config",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "v1",
-                    "data": {
-                      "config.js": "window.__THUNDER_RUNTIME_CONFIG__ = {\n  client: { base: \"${parameters.runtime.gate.clientBase}\" },\n  server: { public_url: \"${environmentConfigs.serverPublicUrl}\" },\n};\n"
-                    },
-                    "kind": "ConfigMap",
-                    "metadata": {
-                      "name": "${metadata.componentName}-gate-config",
-                      "namespace": "${metadata.namespace}"
-                    }
-                  }
-                },
-                {
-                  "id": "console-config",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "v1",
-                    "data": {
-                      "config.js": "window.__THUNDER_RUNTIME_CONFIG__ = {\n  client: { base: \"${parameters.runtime.console.clientBase}\", client_id: \"${parameters.runtime.console.clientId}\", scopes: ${parameters.runtime.console.scopes} },\n  server: { public_url: \"${environmentConfigs.serverPublicUrl}\" },\n};\n"
-                    },
-                    "kind": "ConfigMap",
-                    "metadata": {
-                      "name": "${metadata.componentName}-console-config",
-                      "namespace": "${metadata.namespace}"
-                    }
-                  }
-                },
-                {
-                  "forEach": "${configurations.toConfigFileList()}",
-                  "id": "file-config",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "v1",
-                    "data": {
-                      "${config.name}": "${config.value}\n"
-                    },
-                    "kind": "ConfigMap",
-                    "metadata": {
-                      "name": "${config.resourceName}",
-                      "namespace": "${metadata.namespace}"
-                    }
-                  },
-                  "var": "config"
-                },
-                {
-                  "id": "deployment",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "apps/v1",
-                    "kind": "Deployment",
-                    "metadata": {
-                      "name": "${metadata.componentName}",
-                      "namespace": "${metadata.namespace}"
-                    },
-                    "spec": {
-                      "replicas": "${environmentConfigs.replicas}",
-                      "selector": {
-                        "matchLabels": {
-                          "app": "${metadata.componentName}"
-                        }
-                      },
-                      "template": {
-                        "metadata": {
-                          "labels": {
-                            "app": "${metadata.componentName}"
-                          }
-                        },
-                        "spec": {
-                          "containers": [
-                            {
-                              "command": [
-                                "/opt/thunder/thunder"
-                              ],
-                              "env": "${configurations.configs.envs.map(e, {\"name\": e.name, \"value\": e.value})}\n",
-                              "image": "${parameters.image}",
-                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
-                              "name": "thunder",
-                              "ports": [
-                                {
-                                  "containerPort": "${workload.endpoints[\"api\"].port}"
-                                }
-                              ],
-                              "resources": {
-                                "limits": {
-                                  "cpu": "${environmentConfigs.resourceLimitsCpu}",
-                                  "memory": "${environmentConfigs.resourceLimitsMemory}"
-                                },
-                                "requests": {
-                                  "cpu": "${environmentConfigs.resourceRequestsCpu}",
-                                  "memory": "${environmentConfigs.resourceRequestsMemory}"
-                                }
-                              },
-                              "volumeMounts": "${[{\"name\": \"thunder-config\", \"mountPath\": \"/opt/thunder/repository/conf/deployment.yaml\", \"subPath\": \"deployment.yaml\"}, {\"name\": \"gate-config\", \"mountPath\": \"/opt/thunder/apps/gate/config.js\", \"subPath\": \"config.js\"}, {\"name\": \"console-config\", \"mountPath\": \"/opt/thunder/apps/console/config.js\", \"subPath\": \"config.js\"}, {\"name\": \"sqlite-data\", \"mountPath\": \"/opt/thunder/repository/database\"}] + configurations.toContainerVolumeMounts().map(m, {\"name\": m.name, \"mountPath\": m.mountPath, \"subPath\": m.subPath})}\n"
-                            }
-                          ],
-                          "initContainers": [
-                            {
-                              "args": [
-                                "until [ -f /opt/thunder/repository/database/.setup-complete ]; do\n  echo \"Waiting for setup job...\"\n  sleep 2\ndone\n"
-                              ],
-                              "command": [
-                                "sh",
-                                "-c"
-                              ],
-                              "image": "${parameters.image}",
-                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
-                              "name": "wait-for-setup",
-                              "volumeMounts": [
-                                {
-                                  "mountPath": "/opt/thunder/repository/database",
-                                  "name": "sqlite-data"
-                                }
-                              ]
-                            }
-                          ],
-                          "volumes": "${[{\"name\": \"thunder-config\", \"configMap\": {\"name\": metadata.componentName + \"-config\"}}, {\"name\": \"gate-config\", \"configMap\": {\"name\": metadata.componentName + \"-gate-config\"}}, {\"name\": \"console-config\", \"configMap\": {\"name\": metadata.componentName + \"-console-config\"}}, {\"name\": \"sqlite-data\", \"persistentVolumeClaim\": {\"claimName\": metadata.componentName + \"-sqlite\"}}] + configurations.toVolumes().map(v, {\"name\": v.name, \"configMap\": {\"name\": v.configMap.name}})}\n"
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "id": "service",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "v1",
-                    "kind": "Service",
-                    "metadata": {
-                      "name": "${metadata.componentName}",
-                      "namespace": "${metadata.namespace}"
-                    },
-                    "spec": {
-                      "ports": [
-                        {
-                          "name": "http",
-                          "port": "${workload.endpoints[\"api\"].port}",
-                          "protocol": "TCP",
-                          "targetPort": "${workload.endpoints[\"api\"].port}"
-                        }
-                      ],
-                      "selector": {
-                        "app": "${metadata.componentName}"
-                      },
-                      "type": "ClusterIP"
-                    }
-                  }
-                },
-                {
-                  "forEach": "${workload.endpoints.transformMap(name, ep, ep.type in [\"HTTP\", \"GraphQL\", \"Websocket\"], ep)}",
-                  "id": "httproute-external",
-                  "includeWhen": "${environmentConfigs.endpointVisibility == 'external'}",
-                  "targetPlane": "dataplane",
-                  "template": {
-                    "apiVersion": "gateway.networking.k8s.io/v1",
-                    "kind": "HTTPRoute",
-                    "metadata": {
-                      "labels": "${oc_merge(metadata.labels, {\"openchoreo.dev/endpoint-name\": endpoint.key, \"openchoreo.dev/endpoint-visibility\": \"external\"})}",
-                      "name": "${oc_generate_name(metadata.componentName, endpoint.key)}",
-                      "namespace": "${metadata.namespace}"
-                    },
-                    "spec": {
-                      "hostnames": "${[gateway.ingress.external.?http, gateway.ingress.external.?https].filter(g, g.hasValue()).map(g, g.value().host).distinct().map(h, metadata.environmentName + \"-\" + metadata.componentName + \"-\" + metadata.componentNamespace + \".\" + h)}\n",
-                      "parentRefs": [
-                        {
-                          "name": "${gateway.ingress.external.name}",
-                          "namespace": "${gateway.ingress.external.namespace}"
-                        }
-                      ],
-                      "rules": [
-                        {
-                          "backendRefs": [
-                            {
-                              "name": "${metadata.componentName}",
-                              "port": "${endpoint.value.port}"
-                            }
-                          ],
-                          "filters": [
-                            {
-                              "type": "URLRewrite",
-                              "urlRewrite": {
-                                "path": {
-                                  "replacePrefixMatch": "${endpoint.value.?basePath.orValue(\"/\")}",
-                                  "type": "ReplacePrefixMatch"
-                                }
-                              }
-                            }
-                          ],
-                          "matches": [
-                            {
-                              "path": {
-                                "type": "PathPrefix",
-                                "value": "/"
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  },
-                  "var": "endpoint"
-                }
-              ],
-              "workloadType": "deployment"
+              "imagePullPolicy": "Always"
+            }
+          }
+        }
+      }
+    },
+    {
+      "gvk": "openchoreo.dev/v1alpha1/Workload",
+      "namespace": "thunder-idp",
+      "name": "thunder",
+      "filePath": "/home/runner/work/thunder-githops/thunder-githops/namespaces/thunder-idp/components/thunder/workload.yaml",
+      "object": {
+        "apiVersion": "openchoreo.dev/v1alpha1",
+        "kind": "Workload",
+        "metadata": {
+          "name": "thunder",
+          "namespace": "thunder-idp"
+        },
+        "spec": {
+          "container": {
+            "env": [
+              {
+                "key": "SERVER_PORT",
+                "value": "8090"
+              },
+              {
+                "key": "JWT_VALIDITY",
+                "value": "3600"
+              },
+              {
+                "key": "OAUTH_REFRESH_TOKEN_VALIDITY",
+                "value": "86400"
+              },
+              {
+                "key": "CACHE_SIZE",
+                "value": "10000"
+              },
+              {
+                "key": "CACHE_TTL",
+                "value": "3600"
+              },
+              {
+                "key": "CONSENT_ENABLED",
+                "value": "false"
+              },
+              {
+                "key": "CONSENT_BASE_URL",
+                "value": "http://localhost:9090/api/v1"
+              },
+              {
+                "key": "GATE_CLIENT_BASE",
+                "value": "/gate"
+              },
+              {
+                "key": "CONSOLE_CLIENT_BASE",
+                "value": "/console"
+              },
+              {
+                "key": "CONSOLE_CLIENT_ID",
+                "value": "CONSOLE"
+              },
+              {
+                "key": "CONSOLE_SCOPES",
+                "value": "[\"openid\", \"profile\", \"email\", \"system\"]"
+              },
+              {
+                "key": "CORS_ALLOWED_ORIGINS",
+                "value": "[\"http://development-thunder-thunder.openchoreoapis.localhost:19080\", \"https://localhost:3000\"]"
+              },
+              {
+                "key": "GATE_CLIENT_PORT",
+                "value": "19080"
+              },
+              {
+                "key": "GATE_CLIENT_SCHEME",
+                "value": "http"
+              },
+              {
+                "key": "DB_CONFIG_PATH",
+                "value": "repository/database/configdb.db"
+              },
+              {
+                "key": "DB_RUNTIME_PATH",
+                "value": "repository/database/runtimedb.db"
+              },
+              {
+                "key": "DB_USER_PATH",
+                "value": "repository/database/userdb.db"
+              },
+              {
+                "key": "CRYPTO_ENCRYPTION_KEY",
+                "value": "file://repository/resources/security/crypto.key"
+              }
+            ],
+            "files": [
+              {
+                "key": "wso2_cloud_theme.yaml",
+                "mountPath": "/opt/thunder/repository/resources/themes",
+                "value": "id: \"d1e2f3a4-b5c6-7890-abcd-theme0000001\"\ndisplayName: \"WSO2 Cloud Theme\"\ndescription: \"Default theme for WSO2 Cloud login pages\"\ntheme:\n  direction: \"ltr\"\n  defaultColorScheme: \"light\"\n  colorSchemes:\n    light:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#1a1a2e\"\n          dark: \"#0d0d1a\"\n          contrastText: \"#ffffff\"\n        background:\n          default: \"#f7f8fb\"\n          paper: \"#ffffff\"\n        text:\n          primary: \"#000000\"\n          secondary: \"#494848\"\n    dark:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#ff9966\"\n          dark: \"#fa7b3f\"\n          contrastText: \"#000000\"\n        background:\n          default: \"#121212\"\n          paper: \"#1e1e1e\"\n        text:\n          primary: \"#ffffff\"\n          secondary: \"#cccccc\"\n  shape:\n    borderRadius: 8\n  typography:\n    fontFamily: \"'Inter Variable', sans-serif\"\n    h1:\n      fontSize: \"1.75rem\"\n      fontWeight: 600\n      lineHeight: 1.3\n"
+              },
+              {
+                "key": "sample-flow.yaml",
+                "mountPath": "/opt/thunder/repository/resources/flows",
+                "value": "id: \"f6a7b8c9-d0e1-2345-fabc-678901234567\"\nhandle: auth_flow_config_wso2_cloud_disambiguation\nname: WSO2 Cloud Authentication Flow with Disambiguation\nflowType: AUTHENTICATION\nnodes:\n  - id: start\n    type: START\n    onSuccess: choose_auth\n\n  # --- Choose social provider ---\n  - id: choose_auth\n    type: PROMPT\n    meta:\n      components:\n        - align: center\n          type: TEXT\n          id: text_001\n          label: \"Sign in to WSO2 Cloud\"\n          variant: HEADING_1\n        - type: BLOCK\n          id: block_001\n          components:\n            - eventType: TRIGGER\n              id: action_google\n              label: \"Continue with Google\"\n              type: ACTION\n              variant: SOCIAL\n            - eventType: TRIGGER\n              id: action_github\n              label: \"Continue with GitHub\"\n              type: ACTION\n              variant: SOCIAL\n    prompts:\n      - action:\n          ref: action_google\n          nextNode: google_auth\n      - action:\n          ref: action_github\n          nextNode: github_auth\n\n  # --- Google ---\n  - id: google_auth\n    type: TASK_EXECUTION\n    properties:\n      idpId: \"456efc02-bad3-47bb-bd87-01cc94f8388c\"\n      allowAuthenticationWithoutLocalUser: true\n      allowCrossOUProvisioning: true\n    executor:\n      name: GoogleOIDCAuthExecutor\n    onSuccess: check_user_state\n\n  # --- GitHub ---\n  - id: github_auth\n    type: TASK_EXECUTION\n    properties:\n      idpId: \"372a20db-a946-4b40-add0-0049d15a5f9c\"\n      allowAuthenticationWithoutLocalUser: true\n      allowCrossOUProvisioning: true\n    executor:\n      name: GithubOAuthExecutor\n    onSuccess: check_user_state\n\n  # --- Check if user is ambiguous (exists in multiple OUs) ---\n  # Runs only when userAmbiguous=true (set by OAuthExecutor).\n  # When not ambiguous, skips to org_registration_prompt.\n  - id: check_user_state\n    type: TASK_EXECUTION\n    executor:\n      name: IdentifyingExecutor\n      mode: resolve\n      inputs:\n        - identifier: sub\n          type: TEXT_INPUT\n          required: true\n    onSuccess: org_registration_prompt\n    onIncomplete: prompt_disambiguate\n    condition:\n      key: \"{{ context.userAmbiguous }}\"\n      value: true\n      onSkip: org_registration_prompt\n\n  # --- Disambiguation: user exists in multiple OUs ---\n  - id: prompt_disambiguate\n    type: PROMPT\n    meta:\n      components:\n        - align: center\n          type: TEXT\n          id: text_disambig_title\n          label: \"Select your organization\"\n          variant: HEADING_1\n        - align: center\n          type: TEXT\n          id: text_disambig_subtitle\n          label: \"Your account exists in multiple organizations. Please select one to continue.\"\n          variant: BODY_2\n        - type: BLOCK\n          id: block_disambig\n          components:\n            - id: select_ou\n              ref: ouHandle\n              type: SELECT\n              label: \"Organization\"\n              required: true\n              placeholder: \"Select your organization\"\n              options: []\n            - type: ACTION\n              id: action_select_ou\n              label: \"Continue\"\n              variant: PRIMARY\n              eventType: SUBMIT\n    prompts:\n      - inputs:\n          - ref: select_ou\n            identifier: ouHandle\n            type: SELECT\n            required: true\n        action:\n          ref: action_select_ou\n          nextNode: resolve_federated_user\n\n  # --- Resolve disambiguated user (sets AuthenticatedUser) ---\n  - id: resolve_federated_user\n    type: TASK_EXECUTION\n    executor:\n      name: FederatedAuthResolverExecutor\n      inputs:\n        - identifier: ouHandle\n          type: TEXT_INPUT\n          required: true\n    onSuccess: auth_assert\n    onIncomplete: prompt_disambiguate\n\n  # --- OU provisioning (new social users) ---\n  - id: org_registration_prompt\n    type: PROMPT\n    meta:\n      components:\n        - align: center\n          type: TEXT\n          id: text_org_title\n          label: \"Create Your Organization\"\n          variant: HEADING_1\n        - align: center\n          type: TEXT\n          id: text_org_subtitle\n          label: \"Set up your organization to get started\"\n          variant: BODY\n        - type: BLOCK\n          id: block_org\n          components:\n            - id: input_ou_name\n              ref: ouName\n              type: TEXT_INPUT\n              label: \"Organization Name\"\n              required: true\n              placeholder: \"Enter your organization name\"\n            - id: input_ou_handle\n              ref: ouHandle\n              type: TEXT_INPUT\n              label: \"Organization Handle\"\n              required: true\n              placeholder: \"Enter a unique handle (e.g., my-org)\"\n            - eventType: SUBMIT\n              id: action_create_org\n              label: \"Create Organization\"\n              type: ACTION\n              variant: PRIMARY\n    prompts:\n      - inputs:\n          - ref: input_ou_name\n            type: TEXT_INPUT\n            identifier: ouName\n            required: true\n          - ref: input_ou_handle\n            type: TEXT_INPUT\n            identifier: ouHandle\n            required: true\n        action:\n          ref: action_create_org\n          nextNode: ou_creation\n    condition:\n      key: \"{{ context.userEligibleForProvisioning }}\"\n      value: true\n      onSkip: auth_assert\n\n  - id: ou_creation\n    type: TASK_EXECUTION\n    executor:\n      name: OUExecutor\n    onSuccess: provisioning\n\n  - id: provisioning\n    type: TASK_EXECUTION\n    executor:\n      name: ProvisioningExecutor\n    onSuccess: auth_assert\n\n  # --- Final ---\n  - id: auth_assert\n    type: TASK_EXECUTION\n    executor:\n      name: AuthAssertExecutor\n    onSuccess: end\n\n  - id: end\n    type: END\n"
+              }
+            ],
+            "image": "ghcr.io/asgardeo/thunder:latest"
+          },
+          "endpoints": {
+            "api": {
+              "displayName": "Thunder API",
+              "port": 8090,
+              "type": "HTTP",
+              "visibility": [
+                "external"
+              ]
             }
           },
           "owner": {
             "componentName": "thunder",
             "projectName": "identity-platform"
-          },
-          "workload": {
-            "container": {
-              "env": [
-                {
-                  "key": "SERVER_PORT",
-                  "value": "8090"
-                },
-                {
-                  "key": "JWT_VALIDITY",
-                  "value": "3600"
-                },
-                {
-                  "key": "OAUTH_REFRESH_TOKEN_VALIDITY",
-                  "value": "86400"
-                },
-                {
-                  "key": "CACHE_SIZE",
-                  "value": "10000"
-                },
-                {
-                  "key": "CACHE_TTL",
-                  "value": "3600"
-                },
-                {
-                  "key": "CONSENT_ENABLED",
-                  "value": "false"
-                },
-                {
-                  "key": "CONSENT_BASE_URL",
-                  "value": "http://localhost:9090/api/v1"
-                },
-                {
-                  "key": "GATE_CLIENT_BASE",
-                  "value": "/gate"
-                },
-                {
-                  "key": "CONSOLE_CLIENT_BASE",
-                  "value": "/console"
-                },
-                {
-                  "key": "CONSOLE_CLIENT_ID",
-                  "value": "CONSOLE"
-                },
-                {
-                  "key": "CONSOLE_SCOPES",
-                  "value": "[\"openid\", \"profile\", \"email\", \"system\"]"
-                },
-                {
-                  "key": "CORS_ALLOWED_ORIGINS",
-                  "value": "[\"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080\", \"https://localhost:3000\"]"
-                },
-                {
-                  "key": "GATE_CLIENT_PORT",
-                  "value": "19080"
-                },
-                {
-                  "key": "GATE_CLIENT_SCHEME",
-                  "value": "http"
-                },
-                {
-                  "key": "DB_CONFIG_PATH",
-                  "value": "repository/database/configdb.db"
-                },
-                {
-                  "key": "DB_RUNTIME_PATH",
-                  "value": "repository/database/runtimedb.db"
-                },
-                {
-                  "key": "DB_USER_PATH",
-                  "value": "repository/database/userdb.db"
-                },
-                {
-                  "key": "CRYPTO_ENCRYPTION_KEY",
-                  "value": "file://repository/resources/security/crypto.key"
-                }
-              ],
-              "files": [
-                {
-                  "key": "wso2_cloud_theme.yaml",
-                  "mountPath": "/opt/thunder/repository/resources/themes",
-                  "value": "id: \"d1e2f3a4-b5c6-7890-abcd-theme0000001\"\ndisplayName: \"WSO2 Cloud Theme new 123\"\ndescription: \"Default theme for WSO2 Cloud login pages\"\ntheme:\n  direction: \"ltr\"\n  defaultColorScheme: \"light\"\n  colorSchemes:\n    light:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#1a1a2e\"\n          dark: \"#0d0d1a\"\n          contrastText: \"#ffffff\"\n        background:\n          default: \"#f7f8fb\"\n          paper: \"#ffffff\"\n        text:\n          primary: \"#000000\"\n          secondary: \"#494848\"\n    dark:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#ff9966\"\n          dark: \"#fa7b3f\"\n          contrastText: \"#000000\"\n        background:\n          default: \"#121212\"\n          paper: \"#1e1e1e\"\n        text:\n          primary: \"#ffffff\"\n          secondary: \"#cccccc\"\n  shape:\n    borderRadius: 8\n  typography:\n    fontFamily: \"'Inter Variable', sans-serif\"\n    h1:\n      fontSize: \"1.75rem\"\n      fontWeight: 600\n      lineHeight: 1.3\n"
-                },
-                {
-                  "key": "test_app.yaml",
-                  "mountPath": "/opt/thunder/repository/resources/applications",
-                  "value": "id: \"c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f\"\nname: \"WSO2 Cloud Console\"\ndescription: \"WSO2 Cloud Console frontend application\"\nurl: \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080\"\nlogo_url: \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/assets/logo.svg\"\nis_registration_flow_enabled: false\ncertificate:\n  type: \"NONE\"\n  value: \"\"\ninbound_auth_config:\n  - type: \"oauth2\"\n    config:\n      client_id: \"CLOUD_CONSOLE\"\n      redirect_uris:\n        - \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback\"\n        - \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback\"\n      grant_types:\n        - \"authorization_code\"\n        - \"refresh_token\"\n      response_types:\n        - \"code\"\n      token_endpoint_auth_method: \"none\"\n      pkce_required: true\n      public_client: true\n      token:\n        access_token:\n          validity_period: 3600\n          user_attributes:\n            - \"given_name\"\n            - \"family_name\"\n            - \"email\"\n            - \"groups\"\n            - \"name\"\n            - \"roles\"\n            - \"ouId\"\n            - \"ouName\"\n            - \"ouHandle\"\n        id_token:\n          validity_period: 3600\n          user_attributes:\n            - \"given_name\"\n            - \"family_name\"\n            - \"email\"\n            - \"groups\"\n            - \"name\"\n            - \"ouId\"\n            - \"ouName\"\n            - \"ouHandle\"\n      scope_claims:\n        profile:\n          - \"name\"\n          - \"given_name\"\n          - \"family_name\"\n          - \"picture\"\n          - \"ouId\"\n          - \"ouName\"\n          - \"ouHandle\"\n        email:\n          - \"email\"\n          - \"email_verified\"\n        phone:\n          - \"phone_number\"\n          - \"phone_number_verified\"\n        group:\n          - \"groups\"\nallowed_user_types:\n  - \"Customer\"\n"
-                }
-              ],
-              "image": "ghcr.io/asgardeo/thunder:latest"
-            },
-            "endpoints": {
-              "api": {
-                "displayName": "Thunder API",
-                "port": 8090,
-                "type": "HTTP",
-                "visibility": [
-                  "external"
-                ]
-              }
-            }
           }
         }
       }
@@ -579,7 +199,7 @@
       "gvk": "openchoreo.dev/v1alpha1/ComponentRelease",
       "namespace": "thunder-idp",
       "name": "thunder-20260421-1",
-      "filePath": "/Users/ayeshaj/Documents/SRE/thunder/repos/thunder-githops/namespaces/thunder-idp/components/thunder/thunder-20260421-1.yaml",
+      "filePath": "/home/runner/work/thunder-githops/thunder-githops/namespaces/thunder-idp/components/thunder/thunder-20260421-1.yaml",
       "object": {
         "apiVersion": "openchoreo.dev/v1alpha1",
         "kind": "ComponentRelease",
@@ -1157,196 +777,1157 @@
       }
     },
     {
-      "gvk": "openchoreo.dev/v1alpha1/ReleaseBinding",
+      "gvk": "openchoreo.dev/v1alpha1/ComponentRelease",
       "namespace": "thunder-idp",
-      "name": "thunder-dev",
-      "filePath": "/Users/ayeshaj/Documents/SRE/thunder/repos/thunder-githops/namespaces/thunder-idp/components/thunder/release-binding.yaml",
+      "name": "thunder-20260421-2",
+      "filePath": "/home/runner/work/thunder-githops/thunder-githops/namespaces/thunder-idp/components/thunder/thunder-20260421-2.yaml",
       "object": {
         "apiVersion": "openchoreo.dev/v1alpha1",
-        "kind": "ReleaseBinding",
+        "kind": "ComponentRelease",
         "metadata": {
-          "name": "thunder-dev",
+          "name": "thunder-20260421-2",
           "namespace": "thunder-idp"
         },
         "spec": {
-          "componentTypeEnvironmentConfigs": {
-            "endpointVisibility": "external",
-            "gateClientHostname": "development-thunder-thunder-idp.openchoreoapis.localhost",
-            "replicas": 1,
-            "resourceLimitsCpu": "500m",
-            "resourceLimitsMemory": "512Mi",
-            "resourceRequestsCpu": "100m",
-            "resourceRequestsMemory": "128Mi",
-            "serverPublicUrl": "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080"
+          "componentProfile": {
+            "parameters": {
+              "image": "ghcr.io/asgardeo/thunder:latest",
+              "runtime": {
+                "console": {
+                  "clientBase": "/console",
+                  "clientId": "CONSOLE",
+                  "scopes": "[\"openid\", \"profile\", \"email\", \"system\"]"
+                },
+                "dbStorageSize": "1Gi",
+                "dbType": "sqlite",
+                "gate": {
+                  "clientBase": "/gate"
+                },
+                "imagePullPolicy": "Always"
+              }
+            }
           },
-          "environment": "development",
+          "componentType": {
+            "kind": "ClusterComponentType",
+            "name": "deployment/thunder",
+            "spec": {
+              "environmentConfigs": {
+                "openAPIV3Schema": {
+                  "properties": {
+                    "endpointVisibility": {
+                      "default": "external",
+                      "enum": [
+                        "external",
+                        "internal"
+                      ],
+                      "type": "string"
+                    },
+                    "gateClientHostname": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "replicas": {
+                      "default": 1,
+                      "type": "integer"
+                    },
+                    "resourceLimitsCpu": {
+                      "default": "500m",
+                      "type": "string"
+                    },
+                    "resourceLimitsMemory": {
+                      "default": "512Mi",
+                      "type": "string"
+                    },
+                    "resourceRequestsCpu": {
+                      "default": "100m",
+                      "type": "string"
+                    },
+                    "resourceRequestsMemory": {
+                      "default": "128Mi",
+                      "type": "string"
+                    },
+                    "serverPublicUrl": {
+                      "default": "",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "parameters": {
+                "openAPIV3Schema": {
+                  "properties": {
+                    "image": {
+                      "default": "ghcr.io/asgardeo/thunder:latest",
+                      "type": "string"
+                    },
+                    "runtime": {
+                      "properties": {
+                        "console": {
+                          "properties": {
+                            "clientBase": {
+                              "default": "/console",
+                              "type": "string"
+                            },
+                            "clientId": {
+                              "default": "CONSOLE",
+                              "type": "string"
+                            },
+                            "scopes": {
+                              "default": "[\"openid\", \"profile\", \"email\"]",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "dbStorageSize": {
+                          "default": "1Gi",
+                          "type": "string"
+                        },
+                        "dbType": {
+                          "default": "sqlite",
+                          "enum": [
+                            "sqlite",
+                            "postgres"
+                          ],
+                          "type": "string"
+                        },
+                        "gate": {
+                          "properties": {
+                            "clientBase": {
+                              "default": "/gate",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "imagePullPolicy": {
+                          "default": "Always",
+                          "enum": [
+                            "Always",
+                            "IfNotPresent",
+                            "Never"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "resources": [
+                {
+                  "id": "sqlite-pvc",
+                  "template": {
+                    "apiVersion": "v1",
+                    "kind": "PersistentVolumeClaim",
+                    "metadata": {
+                      "name": "${metadata.componentName}-sqlite",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "accessModes": [
+                        "ReadWriteOnce"
+                      ],
+                      "resources": {
+                        "requests": {
+                          "storage": "${parameters.runtime.dbStorageSize}"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "setup-job",
+                  "template": {
+                    "apiVersion": "batch/v1",
+                    "kind": "Job",
+                    "metadata": {
+                      "name": "${metadata.componentName}-setup",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "backoffLimit": 3,
+                      "template": {
+                        "spec": {
+                          "containers": [
+                            {
+                              "command": [
+                                "sh",
+                                "-c",
+                                "./setup.sh \u0026\u0026 touch /opt/thunder/repository/database/.setup-complete"
+                              ],
+                              "env": "${configurations.configs.envs.map(e, {\"name\": e.name, \"value\": e.value}) + [\n  {\"name\": \"WITH_CONSENT\", \"value\": \"false\"}\n]}\n",
+                              "image": "${parameters.image}",
+                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
+                              "name": "setup",
+                              "volumeMounts": [
+                                {
+                                  "mountPath": "/opt/thunder/repository/conf/deployment.yaml",
+                                  "name": "thunder-config",
+                                  "subPath": "deployment.yaml"
+                                },
+                                {
+                                  "mountPath": "/opt/thunder/repository/database",
+                                  "name": "sqlite-data"
+                                }
+                              ]
+                            }
+                          ],
+                          "initContainers": [
+                            {
+                              "args": [
+                                "if [ ! -f /data/.initialized ]; then\n  echo \"Copying database directory from image...\"\n  cp -r /opt/thunder/repository/database/* /data/\n  touch /data/.initialized\n  echo \"Database initialization complete\"\nelse\n  echo \"Database already initialized\"\nfi\n"
+                              ],
+                              "command": [
+                                "sh",
+                                "-c"
+                              ],
+                              "image": "${parameters.image}",
+                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
+                              "name": "init-database",
+                              "volumeMounts": [
+                                {
+                                  "mountPath": "/data",
+                                  "name": "sqlite-data"
+                                }
+                              ]
+                            }
+                          ],
+                          "restartPolicy": "OnFailure",
+                          "volumes": [
+                            {
+                              "configMap": {
+                                "name": "${metadata.componentName}-config"
+                              },
+                              "name": "thunder-config"
+                            },
+                            {
+                              "name": "sqlite-data",
+                              "persistentVolumeClaim": {
+                                "claimName": "${metadata.componentName}-sqlite"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "ttlSecondsAfterFinished": 300
+                    }
+                  }
+                },
+                {
+                  "id": "thunder-config",
+                  "includeWhen": "${parameters.runtime.dbType == 'sqlite'}",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "deployment.yaml": "server:\n  hostname: \"0.0.0.0\"\n  public_url: \"${environmentConfigs.serverPublicUrl}\"\n  port: ${workload.endpoints[\"api\"].port}\n  http_only: true\n\ngate_client:\n  hostname: \"${environmentConfigs.gateClientHostname}\"\n  port: {{.GATE_CLIENT_PORT}}\n  scheme: \"{{.GATE_CLIENT_SCHEME}}\"\n\ncrypto:\n  encryption:\n    key: \"{{.CRYPTO_ENCRYPTION_KEY}}\"\n\ndatabase:\n  config:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_CONFIG_PATH}}\"\n  runtime:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_RUNTIME_PATH}}\"\n  user:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_USER_PATH}}\"\n\ncache:\n  disabled: false\n  type: \"inmemory\"\n  size: {{.CACHE_SIZE}}\n  ttl: {{.CACHE_TTL}}\n  eviction_policy: \"LRU\"\n  cleanup_interval: 600\n\njwt:\n  validity_period: {{.JWT_VALIDITY}}\n\noauth:\n  refresh_token:\n    renew_on_grant: true\n    validity_period: {{.OAUTH_REFRESH_TOKEN_VALIDITY}}\n\nflow:\n  max_version_history: 3\n  auto_infer_registration: true\n\ncors:\n  allowed_origins: {{.CORS_ALLOWED_ORIGINS}}\n\nconsent:\n  enabled: {{.CONSENT_ENABLED}}\n  base_url: \"{{.CONSENT_BASE_URL}}\"\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${metadata.componentName}-config",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  }
+                },
+                {
+                  "id": "thunder-config-pg",
+                  "includeWhen": "${parameters.runtime.dbType == 'postgres'}",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "deployment.yaml": "server:\n  hostname: \"0.0.0.0\"\n  public_url: \"${environmentConfigs.serverPublicUrl}\"\n  port: ${workload.endpoints[\"api\"].port}\n  http_only: true\n\ngate_client:\n  hostname: \"${environmentConfigs.gateClientHostname}\"\n  port: {{.GATE_CLIENT_PORT}}\n  scheme: \"{{.GATE_CLIENT_SCHEME}}\"\n\ncrypto:\n  encryption:\n    key: \"{{.CRYPTO_ENCRYPTION_KEY}}\"\n\ndatabase:\n  config:\n    type: \"postgres\"\n    postgres:\n      hostname: \"{{.DB_CONFIG_HOSTNAME}}\"\n      port: {{.DB_PORT}}\n      name: \"{{.DB_CONFIG_NAME}}\"\n      username: \"{{.DB_CONFIG_USERNAME}}\"\n      password: \"{{.DB_CONFIG_PASSWORD}}\"\n      sslmode: \"{{.DB_CONFIG_SSLMODE}}\"\n  runtime:\n    type: \"postgres\"\n    postgres:\n      hostname: \"{{.DB_RUNTIME_HOSTNAME}}\"\n      port: {{.DB_PORT}}\n      name: \"{{.DB_RUNTIME_NAME}}\"\n      username: \"{{.DB_RUNTIME_USERNAME}}\"\n      password: \"{{.DB_RUNTIME_PASSWORD}}\"\n      sslmode: \"{{.DB_RUNTIME_SSLMODE}}\"\n  user:\n    type: \"postgres\"\n    postgres:\n      hostname: \"{{.DB_USER_HOSTNAME}}\"\n      port: {{.DB_PORT}}\n      name: \"{{.DB_USER_NAME}}\"\n      username: \"{{.DB_USER_USERNAME}}\"\n      password: \"{{.DB_USER_PASSWORD}}\"\n      sslmode: \"{{.DB_USER_SSLMODE}}\"\n\ncache:\n  disabled: false\n  type: \"inmemory\"\n  size: {{.CACHE_SIZE}}\n  ttl: {{.CACHE_TTL}}\n  eviction_policy: \"LRU\"\n  cleanup_interval: 600\n\njwt:\n  validity_period: {{.JWT_VALIDITY}}\n\noauth:\n  refresh_token:\n    renew_on_grant: true\n    validity_period: {{.OAUTH_REFRESH_TOKEN_VALIDITY}}\n\nflow:\n  max_version_history: 3\n  auto_infer_registration: true\n\ncors:\n  allowed_origins: {{.CORS_ALLOWED_ORIGINS}}\n\nconsent:\n  enabled: {{.CONSENT_ENABLED}}\n  base_url: \"{{.CONSENT_BASE_URL}}\"\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${metadata.componentName}-config",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  }
+                },
+                {
+                  "id": "gate-config",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "config.js": "window.__THUNDER_RUNTIME_CONFIG__ = {\n  client: {\n    base: \"${parameters.runtime.gate.clientBase}\",\n  },\n  server: {\n    public_url: \"${environmentConfigs.serverPublicUrl}\",\n  },\n};\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${metadata.componentName}-gate-config",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  }
+                },
+                {
+                  "id": "console-config",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "config.js": "window.__THUNDER_RUNTIME_CONFIG__ = {\n  client: {\n    base: \"${parameters.runtime.console.clientBase}\",\n    client_id: \"${parameters.runtime.console.clientId}\",\n    scopes: ${parameters.runtime.console.scopes},\n  },\n  server: {\n    public_url: \"${environmentConfigs.serverPublicUrl}\",\n  },\n};\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${metadata.componentName}-console-config",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  }
+                },
+                {
+                  "forEach": "${configurations.toConfigFileList()}",
+                  "id": "file-config",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "${config.name}": "${config.value}\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${config.resourceName}",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  },
+                  "var": "config"
+                },
+                {
+                  "id": "deployment",
+                  "template": {
+                    "apiVersion": "apps/v1",
+                    "kind": "Deployment",
+                    "metadata": {
+                      "name": "${metadata.componentName}",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "replicas": "${environmentConfigs.replicas}",
+                      "selector": {
+                        "matchLabels": {
+                          "app": "${metadata.componentName}"
+                        }
+                      },
+                      "template": {
+                        "metadata": {
+                          "labels": {
+                            "app": "${metadata.componentName}"
+                          }
+                        },
+                        "spec": {
+                          "containers": [
+                            {
+                              "command": [
+                                "/opt/thunder/thunder"
+                              ],
+                              "env": "${configurations.configs.envs.map(e, {\"name\": e.name, \"value\": e.value})}\n",
+                              "image": "${parameters.image}",
+                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
+                              "name": "thunder",
+                              "ports": [
+                                {
+                                  "containerPort": "${workload.endpoints[\"api\"].port}"
+                                }
+                              ],
+                              "resources": {
+                                "limits": {
+                                  "cpu": "${environmentConfigs.resourceLimitsCpu}",
+                                  "memory": "${environmentConfigs.resourceLimitsMemory}"
+                                },
+                                "requests": {
+                                  "cpu": "${environmentConfigs.resourceRequestsCpu}",
+                                  "memory": "${environmentConfigs.resourceRequestsMemory}"
+                                }
+                              },
+                              "volumeMounts": "${[\n  {\"name\": \"thunder-config\", \"mountPath\": \"/opt/thunder/repository/conf/deployment.yaml\", \"subPath\": \"deployment.yaml\"},\n  {\"name\": \"gate-config\", \"mountPath\": \"/opt/thunder/apps/gate/config.js\", \"subPath\": \"config.js\"},\n  {\"name\": \"console-config\", \"mountPath\": \"/opt/thunder/apps/console/config.js\", \"subPath\": \"config.js\"},\n  {\"name\": \"sqlite-data\", \"mountPath\": \"/opt/thunder/repository/database\"}\n] + configurations.toContainerVolumeMounts().map(m, {\"name\": m.name, \"mountPath\": m.mountPath, \"subPath\": m.subPath})}\n"
+                            }
+                          ],
+                          "initContainers": [
+                            {
+                              "args": [
+                                "until [ -f /opt/thunder/repository/database/.setup-complete ]; do\n  echo \"Waiting for setup job to complete...\"\n  sleep 2\ndone\necho \"Setup complete, starting Thunder...\"\n"
+                              ],
+                              "command": [
+                                "sh",
+                                "-c"
+                              ],
+                              "image": "${parameters.image}",
+                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
+                              "name": "wait-for-setup",
+                              "volumeMounts": [
+                                {
+                                  "mountPath": "/opt/thunder/repository/database",
+                                  "name": "sqlite-data"
+                                }
+                              ]
+                            }
+                          ],
+                          "volumes": "${[\n  {\"name\": \"thunder-config\", \"configMap\": {\"name\": metadata.componentName + \"-config\"}},\n  {\"name\": \"gate-config\", \"configMap\": {\"name\": metadata.componentName + \"-gate-config\"}},\n  {\"name\": \"console-config\", \"configMap\": {\"name\": metadata.componentName + \"-console-config\"}},\n  {\"name\": \"sqlite-data\", \"persistentVolumeClaim\": {\"claimName\": metadata.componentName + \"-sqlite\"}}\n] + configurations.toVolumes().map(v, {\"name\": v.name, \"configMap\": {\"name\": v.configMap.name}})}\n"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "service",
+                  "template": {
+                    "apiVersion": "v1",
+                    "kind": "Service",
+                    "metadata": {
+                      "name": "${metadata.componentName}",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "ports": [
+                        {
+                          "name": "http",
+                          "port": "${workload.endpoints[\"api\"].port}",
+                          "protocol": "TCP",
+                          "targetPort": "${workload.endpoints[\"api\"].port}"
+                        }
+                      ],
+                      "selector": {
+                        "app": "${metadata.componentName}"
+                      },
+                      "type": "ClusterIP"
+                    }
+                  }
+                },
+                {
+                  "forEach": "${workload.endpoints.transformMap(name, ep, ep.type in [\"HTTP\", \"GraphQL\", \"Websocket\"], ep)}",
+                  "id": "httproute-external",
+                  "includeWhen": "${environmentConfigs.endpointVisibility == 'external'}",
+                  "template": {
+                    "apiVersion": "gateway.networking.k8s.io/v1",
+                    "kind": "HTTPRoute",
+                    "metadata": {
+                      "labels": "${oc_merge(metadata.labels, {\"openchoreo.dev/endpoint-name\": endpoint.key, \"openchoreo.dev/endpoint-visibility\": \"external\"})}",
+                      "name": "${oc_generate_name(metadata.componentName, endpoint.key)}",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "hostnames": "${[gateway.ingress.external.?http, gateway.ingress.external.?https]\n  .filter(g, g.hasValue()).map(g, g.value().host).distinct()\n  .map(h, metadata.environmentName + \"-\" + metadata.componentName + \"-\" + metadata.componentNamespace + \".\" + h)}\n",
+                      "parentRefs": [
+                        {
+                          "name": "${gateway.ingress.external.name}",
+                          "namespace": "${gateway.ingress.external.namespace}"
+                        }
+                      ],
+                      "rules": [
+                        {
+                          "backendRefs": [
+                            {
+                              "name": "${metadata.componentName}",
+                              "port": "${endpoint.value.port}"
+                            }
+                          ],
+                          "filters": [
+                            {
+                              "type": "URLRewrite",
+                              "urlRewrite": {
+                                "path": {
+                                  "replacePrefixMatch": "${endpoint.value.?basePath.orValue(\"/\")}",
+                                  "type": "ReplacePrefixMatch"
+                                }
+                              }
+                            }
+                          ],
+                          "matches": [
+                            {
+                              "path": {
+                                "type": "PathPrefix",
+                                "value": "/"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "var": "endpoint"
+                }
+              ],
+              "workloadType": "deployment"
+            }
+          },
           "owner": {
             "componentName": "thunder",
             "projectName": "identity-platform"
           },
-          "releaseName": "thunder-v8",
-          "state": "Active"
-        }
-      }
-    },
-    {
-      "gvk": "openchoreo.dev/v1alpha1/Component",
-      "namespace": "thunder-idp",
-      "name": "thunder",
-      "filePath": "/Users/ayeshaj/Documents/SRE/thunder/repos/thunder-githops/namespaces/thunder-idp/components/thunder/component.yaml",
-      "object": {
-        "apiVersion": "openchoreo.dev/v1alpha1",
-        "kind": "Component",
-        "metadata": {
-          "annotations": {
-            "openchoreo.dev/description": "WSO2 Thunder Identity Management Service",
-            "openchoreo.dev/display-name": "Thunder"
-          },
-          "name": "thunder",
-          "namespace": "thunder-idp"
-        },
-        "spec": {
-          "componentType": {
-            "kind": "ClusterComponentType",
-            "name": "deployment/thunder"
-          },
-          "owner": {
-            "projectName": "identity-platform"
-          },
-          "parameters": {
-            "image": "ghcr.io/asgardeo/thunder:latest",
-            "runtime": {
-              "console": {
-                "clientBase": "/console",
-                "clientId": "CONSOLE",
-                "scopes": "[\"openid\", \"profile\", \"email\", \"system\"]"
-              },
-              "dbStorageSize": "1Gi",
-              "dbType": "sqlite",
-              "gate": {
-                "clientBase": "/gate"
-              },
-              "imagePullPolicy": "Always"
+          "workload": {
+            "container": {
+              "env": [
+                {
+                  "key": "SERVER_PORT",
+                  "value": "8090"
+                },
+                {
+                  "key": "JWT_VALIDITY",
+                  "value": "3600"
+                },
+                {
+                  "key": "OAUTH_REFRESH_TOKEN_VALIDITY",
+                  "value": "86400"
+                },
+                {
+                  "key": "CACHE_SIZE",
+                  "value": "10000"
+                },
+                {
+                  "key": "CACHE_TTL",
+                  "value": "3600"
+                },
+                {
+                  "key": "CONSENT_ENABLED",
+                  "value": "false"
+                },
+                {
+                  "key": "CONSENT_BASE_URL",
+                  "value": "http://localhost:9090/api/v1"
+                },
+                {
+                  "key": "GATE_CLIENT_BASE",
+                  "value": "/gate"
+                },
+                {
+                  "key": "CONSOLE_CLIENT_BASE",
+                  "value": "/console"
+                },
+                {
+                  "key": "CONSOLE_CLIENT_ID",
+                  "value": "CONSOLE"
+                },
+                {
+                  "key": "CONSOLE_SCOPES",
+                  "value": "[\"openid\", \"profile\", \"email\", \"system\"]"
+                },
+                {
+                  "key": "CORS_ALLOWED_ORIGINS",
+                  "value": "[\"http://development-thunder-thunder.openchoreoapis.localhost:19080\", \"https://localhost:3000\"]"
+                },
+                {
+                  "key": "GATE_CLIENT_PORT",
+                  "value": "19080"
+                },
+                {
+                  "key": "GATE_CLIENT_SCHEME",
+                  "value": "http"
+                },
+                {
+                  "key": "DB_CONFIG_PATH",
+                  "value": "repository/database/configdb.db"
+                },
+                {
+                  "key": "DB_RUNTIME_PATH",
+                  "value": "repository/database/runtimedb.db"
+                },
+                {
+                  "key": "DB_USER_PATH",
+                  "value": "repository/database/userdb.db"
+                },
+                {
+                  "key": "CRYPTO_ENCRYPTION_KEY",
+                  "value": "file://repository/resources/security/crypto.key"
+                }
+              ],
+              "files": [
+                {
+                  "key": "wso2_cloud_theme.yaml",
+                  "mountPath": "/opt/thunder/repository/resources/themes",
+                  "value": "id: \"d1e2f3a4-b5c6-7890-abcd-theme0000001\"\ndisplayName: \"WSO2 Cloud Theme\"\ndescription: \"Default theme for WSO2 Cloud login pages\"\ntheme:\n  direction: \"ltr\"\n  defaultColorScheme: \"light\"\n  colorSchemes:\n    light:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#1a1a2e\"\n          dark: \"#0d0d1a\"\n          contrastText: \"#ffffff\"\n        background:\n          default: \"#f7f8fb\"\n          paper: \"#ffffff\"\n        text:\n          primary: \"#000000\"\n          secondary: \"#494848\"\n    dark:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#ff9966\"\n          dark: \"#fa7b3f\"\n          contrastText: \"#000000\"\n        background:\n          default: \"#121212\"\n          paper: \"#1e1e1e\"\n        text:\n          primary: \"#ffffff\"\n          secondary: \"#cccccc\"\n  shape:\n    borderRadius: 8\n  typography:\n    fontFamily: \"'Inter Variable', sans-serif\"\n    h1:\n      fontSize: \"1.75rem\"\n      fontWeight: 600\n      lineHeight: 1.3\n"
+                },
+                {
+                  "key": "test_app.yaml",
+                  "mountPath": "/opt/thunder/repository/resources/applications",
+                  "value": "id: \"c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f\"\nname: \"WSO2 Cloud Console Revamped\"\ndescription: \"WSO2 Cloud Console frontend application\"\nurl: \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080\"\nlogo_url: \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/assets/logo.svg\"\nis_registration_flow_enabled: false\ncertificate:\n  type: \"NONE\"\n  value: \"\"\ninbound_auth_config:\n  - type: \"oauth2\"\n    config:\n      client_id: \"CLOUD_CONSOLE\"\n      redirect_uris:\n        - \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback\"\n        - \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback\"\n      grant_types:\n        - \"authorization_code\"\n        - \"refresh_token\"\n      response_types:\n        - \"code\"\n      token_endpoint_auth_method: \"none\"\n      pkce_required: true\n      public_client: true\n      token:\n        access_token:\n          validity_period: 3600\n          user_attributes:\n            - \"given_name\"\n            - \"family_name\"\n            - \"email\"\n            - \"groups\"\n            - \"name\"\n            - \"roles\"\n            - \"ouId\"\n            - \"ouName\"\n            - \"ouHandle\"\n        id_token:\n          validity_period: 3600\n          user_attributes:\n            - \"given_name\"\n            - \"family_name\"\n            - \"email\"\n            - \"groups\"\n            - \"name\"\n            - \"ouId\"\n            - \"ouName\"\n            - \"ouHandle\"\n      scope_claims:\n        profile:\n          - \"name\"\n          - \"given_name\"\n          - \"family_name\"\n          - \"picture\"\n          - \"ouId\"\n          - \"ouName\"\n          - \"ouHandle\"\n        email:\n          - \"email\"\n          - \"email_verified\"\n        phone:\n          - \"phone_number\"\n          - \"phone_number_verified\"\n        group:\n          - \"groups\"\nallowed_user_types:\n  - \"Customer\"\n"
+                }
+              ],
+              "image": "ghcr.io/asgardeo/thunder:latest"
+            },
+            "endpoints": {
+              "api": {
+                "displayName": "Thunder API",
+                "port": 8090,
+                "type": "HTTP",
+                "visibility": [
+                  "external"
+                ]
+              }
             }
           }
         }
       }
     },
     {
-      "gvk": "openchoreo.dev/v1alpha1/Workload",
+      "gvk": "openchoreo.dev/v1alpha1/ComponentRelease",
       "namespace": "thunder-idp",
-      "name": "thunder",
-      "filePath": "/Users/ayeshaj/Documents/SRE/thunder/repos/thunder-githops/namespaces/thunder-idp/components/thunder/workload.yaml",
+      "name": "thunder-v8",
+      "filePath": "/home/runner/work/thunder-githops/thunder-githops/namespaces/thunder-idp/components/thunder/component-release.yaml",
       "object": {
         "apiVersion": "openchoreo.dev/v1alpha1",
-        "kind": "Workload",
+        "kind": "ComponentRelease",
         "metadata": {
-          "name": "thunder",
+          "name": "thunder-v8",
           "namespace": "thunder-idp"
         },
         "spec": {
-          "container": {
-            "env": [
-              {
-                "key": "SERVER_PORT",
-                "value": "8090"
-              },
-              {
-                "key": "JWT_VALIDITY",
-                "value": "3600"
-              },
-              {
-                "key": "OAUTH_REFRESH_TOKEN_VALIDITY",
-                "value": "86400"
-              },
-              {
-                "key": "CACHE_SIZE",
-                "value": "10000"
-              },
-              {
-                "key": "CACHE_TTL",
-                "value": "3600"
-              },
-              {
-                "key": "CONSENT_ENABLED",
-                "value": "false"
-              },
-              {
-                "key": "CONSENT_BASE_URL",
-                "value": "http://localhost:9090/api/v1"
-              },
-              {
-                "key": "GATE_CLIENT_BASE",
-                "value": "/gate"
-              },
-              {
-                "key": "CONSOLE_CLIENT_BASE",
-                "value": "/console"
-              },
-              {
-                "key": "CONSOLE_CLIENT_ID",
-                "value": "CONSOLE"
-              },
-              {
-                "key": "CONSOLE_SCOPES",
-                "value": "[\"openid\", \"profile\", \"email\", \"system\"]"
-              },
-              {
-                "key": "CORS_ALLOWED_ORIGINS",
-                "value": "[\"http://development-thunder-thunder.openchoreoapis.localhost:19080\", \"https://localhost:3000\"]"
-              },
-              {
-                "key": "GATE_CLIENT_PORT",
-                "value": "19080"
-              },
-              {
-                "key": "GATE_CLIENT_SCHEME",
-                "value": "http"
-              },
-              {
-                "key": "DB_CONFIG_PATH",
-                "value": "repository/database/configdb.db"
-              },
-              {
-                "key": "DB_RUNTIME_PATH",
-                "value": "repository/database/runtimedb.db"
-              },
-              {
-                "key": "DB_USER_PATH",
-                "value": "repository/database/userdb.db"
-              },
-              {
-                "key": "CRYPTO_ENCRYPTION_KEY",
-                "value": "file://repository/resources/security/crypto.key"
+          "componentProfile": {
+            "parameters": {
+              "image": "ghcr.io/asgardeo/thunder:latest",
+              "runtime": {
+                "console": {
+                  "clientBase": "/console",
+                  "clientId": "CONSOLE",
+                  "scopes": "[\"openid\", \"profile\", \"email\", \"system\"]"
+                },
+                "dbStorageSize": "1Gi",
+                "dbType": "sqlite",
+                "gate": {
+                  "clientBase": "/gate"
+                },
+                "imagePullPolicy": "Always"
               }
-            ],
-            "files": [
-              {
-                "key": "wso2_cloud_theme.yaml",
-                "mountPath": "/opt/thunder/repository/resources/themes",
-                "value": "id: \"d1e2f3a4-b5c6-7890-abcd-theme0000001\"\ndisplayName: \"WSO2 Cloud Theme\"\ndescription: \"Default theme for WSO2 Cloud login pages\"\ntheme:\n  direction: \"ltr\"\n  defaultColorScheme: \"light\"\n  colorSchemes:\n    light:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#1a1a2e\"\n          dark: \"#0d0d1a\"\n          contrastText: \"#ffffff\"\n        background:\n          default: \"#f7f8fb\"\n          paper: \"#ffffff\"\n        text:\n          primary: \"#000000\"\n          secondary: \"#494848\"\n    dark:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#ff9966\"\n          dark: \"#fa7b3f\"\n          contrastText: \"#000000\"\n        background:\n          default: \"#121212\"\n          paper: \"#1e1e1e\"\n        text:\n          primary: \"#ffffff\"\n          secondary: \"#cccccc\"\n  shape:\n    borderRadius: 8\n  typography:\n    fontFamily: \"'Inter Variable', sans-serif\"\n    h1:\n      fontSize: \"1.75rem\"\n      fontWeight: 600\n      lineHeight: 1.3\n"
-              },
-              {
-                "key": "test_app.yaml",
-                "mountPath": "/opt/thunder/repository/resources/applications",
-                "value": "id: \"c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f\"\nname: \"WSO2 Cloud Console Revamped\"\ndescription: \"WSO2 Cloud Console frontend application\"\nurl: \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080\"\nlogo_url: \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/assets/logo.svg\"\nis_registration_flow_enabled: false\ncertificate:\n  type: \"NONE\"\n  value: \"\"\ninbound_auth_config:\n  - type: \"oauth2\"\n    config:\n      client_id: \"CLOUD_CONSOLE\"\n      redirect_uris:\n        - \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback\"\n        - \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback\"\n      grant_types:\n        - \"authorization_code\"\n        - \"refresh_token\"\n      response_types:\n        - \"code\"\n      token_endpoint_auth_method: \"none\"\n      pkce_required: true\n      public_client: true\n      token:\n        access_token:\n          validity_period: 3600\n          user_attributes:\n            - \"given_name\"\n            - \"family_name\"\n            - \"email\"\n            - \"groups\"\n            - \"name\"\n            - \"roles\"\n            - \"ouId\"\n            - \"ouName\"\n            - \"ouHandle\"\n        id_token:\n          validity_period: 3600\n          user_attributes:\n            - \"given_name\"\n            - \"family_name\"\n            - \"email\"\n            - \"groups\"\n            - \"name\"\n            - \"ouId\"\n            - \"ouName\"\n            - \"ouHandle\"\n      scope_claims:\n        profile:\n          - \"name\"\n          - \"given_name\"\n          - \"family_name\"\n          - \"picture\"\n          - \"ouId\"\n          - \"ouName\"\n          - \"ouHandle\"\n        email:\n          - \"email\"\n          - \"email_verified\"\n        phone:\n          - \"phone_number\"\n          - \"phone_number_verified\"\n        group:\n          - \"groups\"\nallowed_user_types:\n  - \"Customer\"\n"
-              }
-            ],
-            "image": "ghcr.io/asgardeo/thunder:latest"
+            }
           },
-          "endpoints": {
-            "api": {
-              "displayName": "Thunder API",
-              "port": 8090,
-              "type": "HTTP",
-              "visibility": [
-                "external"
-              ]
+          "componentType": {
+            "kind": "ClusterComponentType",
+            "name": "deployment/thunder",
+            "spec": {
+              "environmentConfigs": {
+                "openAPIV3Schema": {
+                  "properties": {
+                    "endpointVisibility": {
+                      "default": "external",
+                      "enum": [
+                        "external",
+                        "internal"
+                      ],
+                      "type": "string"
+                    },
+                    "gateClientHostname": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "replicas": {
+                      "default": 1,
+                      "type": "integer"
+                    },
+                    "resourceLimitsCpu": {
+                      "default": "500m",
+                      "type": "string"
+                    },
+                    "resourceLimitsMemory": {
+                      "default": "512Mi",
+                      "type": "string"
+                    },
+                    "resourceRequestsCpu": {
+                      "default": "100m",
+                      "type": "string"
+                    },
+                    "resourceRequestsMemory": {
+                      "default": "128Mi",
+                      "type": "string"
+                    },
+                    "serverPublicUrl": {
+                      "default": "",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "parameters": {
+                "openAPIV3Schema": {
+                  "properties": {
+                    "image": {
+                      "default": "ghcr.io/asgardeo/thunder:latest",
+                      "type": "string"
+                    },
+                    "runtime": {
+                      "properties": {
+                        "console": {
+                          "properties": {
+                            "clientBase": {
+                              "default": "/console",
+                              "type": "string"
+                            },
+                            "clientId": {
+                              "default": "CONSOLE",
+                              "type": "string"
+                            },
+                            "scopes": {
+                              "default": "[\"openid\", \"profile\", \"email\"]",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "dbStorageSize": {
+                          "default": "1Gi",
+                          "type": "string"
+                        },
+                        "dbType": {
+                          "default": "sqlite",
+                          "enum": [
+                            "sqlite",
+                            "postgres"
+                          ],
+                          "type": "string"
+                        },
+                        "gate": {
+                          "properties": {
+                            "clientBase": {
+                              "default": "/gate",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "imagePullPolicy": {
+                          "default": "Always",
+                          "enum": [
+                            "Always",
+                            "IfNotPresent",
+                            "Never"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "resources": [
+                {
+                  "id": "sqlite-pvc",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "v1",
+                    "kind": "PersistentVolumeClaim",
+                    "metadata": {
+                      "name": "${metadata.componentName}-sqlite",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "accessModes": [
+                        "ReadWriteOnce"
+                      ],
+                      "resources": {
+                        "requests": {
+                          "storage": "${parameters.runtime.dbStorageSize}"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "setup-job",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "batch/v1",
+                    "kind": "Job",
+                    "metadata": {
+                      "name": "${metadata.componentName}-setup",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "backoffLimit": 3,
+                      "template": {
+                        "spec": {
+                          "containers": [
+                            {
+                              "command": [
+                                "sh",
+                                "-c",
+                                "./setup.sh \u0026\u0026 touch /opt/thunder/repository/database/.setup-complete"
+                              ],
+                              "env": "${configurations.configs.envs.map(e, {\"name\": e.name, \"value\": e.value}) + [{\"name\": \"WITH_CONSENT\", \"value\": \"false\"}]}\n",
+                              "image": "${parameters.image}",
+                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
+                              "name": "setup",
+                              "volumeMounts": [
+                                {
+                                  "mountPath": "/opt/thunder/repository/conf/deployment.yaml",
+                                  "name": "thunder-config",
+                                  "subPath": "deployment.yaml"
+                                },
+                                {
+                                  "mountPath": "/opt/thunder/repository/database",
+                                  "name": "sqlite-data"
+                                }
+                              ]
+                            }
+                          ],
+                          "initContainers": [
+                            {
+                              "args": [
+                                "if [ ! -f /data/.initialized ]; then\n  cp -r /opt/thunder/repository/database/* /data/\n  touch /data/.initialized\nfi\n"
+                              ],
+                              "command": [
+                                "sh",
+                                "-c"
+                              ],
+                              "image": "${parameters.image}",
+                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
+                              "name": "init-database",
+                              "volumeMounts": [
+                                {
+                                  "mountPath": "/data",
+                                  "name": "sqlite-data"
+                                }
+                              ]
+                            }
+                          ],
+                          "restartPolicy": "OnFailure",
+                          "volumes": [
+                            {
+                              "configMap": {
+                                "name": "${metadata.componentName}-config"
+                              },
+                              "name": "thunder-config"
+                            },
+                            {
+                              "name": "sqlite-data",
+                              "persistentVolumeClaim": {
+                                "claimName": "${metadata.componentName}-sqlite"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "ttlSecondsAfterFinished": 300
+                    }
+                  }
+                },
+                {
+                  "id": "thunder-config",
+                  "includeWhen": "${parameters.runtime.dbType == 'sqlite'}",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "deployment.yaml": "server:\n  hostname: \"0.0.0.0\"\n  public_url: \"${environmentConfigs.serverPublicUrl}\"\n  port: ${workload.endpoints[\"api\"].port}\n  http_only: true\n\ngate_client:\n  hostname: \"${environmentConfigs.gateClientHostname}\"\n  port: {{.GATE_CLIENT_PORT}}\n  scheme: \"{{.GATE_CLIENT_SCHEME}}\"\n\ncrypto:\n  encryption:\n    key: \"{{.CRYPTO_ENCRYPTION_KEY}}\"\n\ndatabase:\n  config:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_CONFIG_PATH}}\"\n  runtime:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_RUNTIME_PATH}}\"\n  user:\n    type: \"sqlite\"\n    sqlite:\n      path: \"{{.DB_USER_PATH}}\"\n\ncache:\n  disabled: false\n  type: \"inmemory\"\n  size: {{.CACHE_SIZE}}\n  ttl: {{.CACHE_TTL}}\n  eviction_policy: \"LRU\"\n  cleanup_interval: 600\n\njwt:\n  validity_period: {{.JWT_VALIDITY}}\n\noauth:\n  refresh_token:\n    renew_on_grant: true\n    validity_period: {{.OAUTH_REFRESH_TOKEN_VALIDITY}}\n\ncors:\n  allowed_origins: {{.CORS_ALLOWED_ORIGINS}}\n\nconsent:\n  enabled: {{.CONSENT_ENABLED}}\n  base_url: \"{{.CONSENT_BASE_URL}}\"\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${metadata.componentName}-config",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  }
+                },
+                {
+                  "id": "gate-config",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "config.js": "window.__THUNDER_RUNTIME_CONFIG__ = {\n  client: { base: \"${parameters.runtime.gate.clientBase}\" },\n  server: { public_url: \"${environmentConfigs.serverPublicUrl}\" },\n};\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${metadata.componentName}-gate-config",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  }
+                },
+                {
+                  "id": "console-config",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "config.js": "window.__THUNDER_RUNTIME_CONFIG__ = {\n  client: { base: \"${parameters.runtime.console.clientBase}\", client_id: \"${parameters.runtime.console.clientId}\", scopes: ${parameters.runtime.console.scopes} },\n  server: { public_url: \"${environmentConfigs.serverPublicUrl}\" },\n};\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${metadata.componentName}-console-config",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  }
+                },
+                {
+                  "forEach": "${configurations.toConfigFileList()}",
+                  "id": "file-config",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "v1",
+                    "data": {
+                      "${config.name}": "${config.value}\n"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                      "name": "${config.resourceName}",
+                      "namespace": "${metadata.namespace}"
+                    }
+                  },
+                  "var": "config"
+                },
+                {
+                  "id": "deployment",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "apps/v1",
+                    "kind": "Deployment",
+                    "metadata": {
+                      "name": "${metadata.componentName}",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "replicas": "${environmentConfigs.replicas}",
+                      "selector": {
+                        "matchLabels": {
+                          "app": "${metadata.componentName}"
+                        }
+                      },
+                      "template": {
+                        "metadata": {
+                          "labels": {
+                            "app": "${metadata.componentName}"
+                          }
+                        },
+                        "spec": {
+                          "containers": [
+                            {
+                              "command": [
+                                "/opt/thunder/thunder"
+                              ],
+                              "env": "${configurations.configs.envs.map(e, {\"name\": e.name, \"value\": e.value})}\n",
+                              "image": "${parameters.image}",
+                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
+                              "name": "thunder",
+                              "ports": [
+                                {
+                                  "containerPort": "${workload.endpoints[\"api\"].port}"
+                                }
+                              ],
+                              "resources": {
+                                "limits": {
+                                  "cpu": "${environmentConfigs.resourceLimitsCpu}",
+                                  "memory": "${environmentConfigs.resourceLimitsMemory}"
+                                },
+                                "requests": {
+                                  "cpu": "${environmentConfigs.resourceRequestsCpu}",
+                                  "memory": "${environmentConfigs.resourceRequestsMemory}"
+                                }
+                              },
+                              "volumeMounts": "${[{\"name\": \"thunder-config\", \"mountPath\": \"/opt/thunder/repository/conf/deployment.yaml\", \"subPath\": \"deployment.yaml\"}, {\"name\": \"gate-config\", \"mountPath\": \"/opt/thunder/apps/gate/config.js\", \"subPath\": \"config.js\"}, {\"name\": \"console-config\", \"mountPath\": \"/opt/thunder/apps/console/config.js\", \"subPath\": \"config.js\"}, {\"name\": \"sqlite-data\", \"mountPath\": \"/opt/thunder/repository/database\"}] + configurations.toContainerVolumeMounts().map(m, {\"name\": m.name, \"mountPath\": m.mountPath, \"subPath\": m.subPath})}\n"
+                            }
+                          ],
+                          "initContainers": [
+                            {
+                              "args": [
+                                "until [ -f /opt/thunder/repository/database/.setup-complete ]; do\n  echo \"Waiting for setup job...\"\n  sleep 2\ndone\n"
+                              ],
+                              "command": [
+                                "sh",
+                                "-c"
+                              ],
+                              "image": "${parameters.image}",
+                              "imagePullPolicy": "${parameters.runtime.imagePullPolicy}",
+                              "name": "wait-for-setup",
+                              "volumeMounts": [
+                                {
+                                  "mountPath": "/opt/thunder/repository/database",
+                                  "name": "sqlite-data"
+                                }
+                              ]
+                            }
+                          ],
+                          "volumes": "${[{\"name\": \"thunder-config\", \"configMap\": {\"name\": metadata.componentName + \"-config\"}}, {\"name\": \"gate-config\", \"configMap\": {\"name\": metadata.componentName + \"-gate-config\"}}, {\"name\": \"console-config\", \"configMap\": {\"name\": metadata.componentName + \"-console-config\"}}, {\"name\": \"sqlite-data\", \"persistentVolumeClaim\": {\"claimName\": metadata.componentName + \"-sqlite\"}}] + configurations.toVolumes().map(v, {\"name\": v.name, \"configMap\": {\"name\": v.configMap.name}})}\n"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "service",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "v1",
+                    "kind": "Service",
+                    "metadata": {
+                      "name": "${metadata.componentName}",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "ports": [
+                        {
+                          "name": "http",
+                          "port": "${workload.endpoints[\"api\"].port}",
+                          "protocol": "TCP",
+                          "targetPort": "${workload.endpoints[\"api\"].port}"
+                        }
+                      ],
+                      "selector": {
+                        "app": "${metadata.componentName}"
+                      },
+                      "type": "ClusterIP"
+                    }
+                  }
+                },
+                {
+                  "forEach": "${workload.endpoints.transformMap(name, ep, ep.type in [\"HTTP\", \"GraphQL\", \"Websocket\"], ep)}",
+                  "id": "httproute-external",
+                  "includeWhen": "${environmentConfigs.endpointVisibility == 'external'}",
+                  "targetPlane": "dataplane",
+                  "template": {
+                    "apiVersion": "gateway.networking.k8s.io/v1",
+                    "kind": "HTTPRoute",
+                    "metadata": {
+                      "labels": "${oc_merge(metadata.labels, {\"openchoreo.dev/endpoint-name\": endpoint.key, \"openchoreo.dev/endpoint-visibility\": \"external\"})}",
+                      "name": "${oc_generate_name(metadata.componentName, endpoint.key)}",
+                      "namespace": "${metadata.namespace}"
+                    },
+                    "spec": {
+                      "hostnames": "${[gateway.ingress.external.?http, gateway.ingress.external.?https].filter(g, g.hasValue()).map(g, g.value().host).distinct().map(h, metadata.environmentName + \"-\" + metadata.componentName + \"-\" + metadata.componentNamespace + \".\" + h)}\n",
+                      "parentRefs": [
+                        {
+                          "name": "${gateway.ingress.external.name}",
+                          "namespace": "${gateway.ingress.external.namespace}"
+                        }
+                      ],
+                      "rules": [
+                        {
+                          "backendRefs": [
+                            {
+                              "name": "${metadata.componentName}",
+                              "port": "${endpoint.value.port}"
+                            }
+                          ],
+                          "filters": [
+                            {
+                              "type": "URLRewrite",
+                              "urlRewrite": {
+                                "path": {
+                                  "replacePrefixMatch": "${endpoint.value.?basePath.orValue(\"/\")}",
+                                  "type": "ReplacePrefixMatch"
+                                }
+                              }
+                            }
+                          ],
+                          "matches": [
+                            {
+                              "path": {
+                                "type": "PathPrefix",
+                                "value": "/"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "var": "endpoint"
+                }
+              ],
+              "workloadType": "deployment"
             }
           },
           "owner": {
             "componentName": "thunder",
             "projectName": "identity-platform"
+          },
+          "workload": {
+            "container": {
+              "env": [
+                {
+                  "key": "SERVER_PORT",
+                  "value": "8090"
+                },
+                {
+                  "key": "JWT_VALIDITY",
+                  "value": "3600"
+                },
+                {
+                  "key": "OAUTH_REFRESH_TOKEN_VALIDITY",
+                  "value": "86400"
+                },
+                {
+                  "key": "CACHE_SIZE",
+                  "value": "10000"
+                },
+                {
+                  "key": "CACHE_TTL",
+                  "value": "3600"
+                },
+                {
+                  "key": "CONSENT_ENABLED",
+                  "value": "false"
+                },
+                {
+                  "key": "CONSENT_BASE_URL",
+                  "value": "http://localhost:9090/api/v1"
+                },
+                {
+                  "key": "GATE_CLIENT_BASE",
+                  "value": "/gate"
+                },
+                {
+                  "key": "CONSOLE_CLIENT_BASE",
+                  "value": "/console"
+                },
+                {
+                  "key": "CONSOLE_CLIENT_ID",
+                  "value": "CONSOLE"
+                },
+                {
+                  "key": "CONSOLE_SCOPES",
+                  "value": "[\"openid\", \"profile\", \"email\", \"system\"]"
+                },
+                {
+                  "key": "CORS_ALLOWED_ORIGINS",
+                  "value": "[\"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080\", \"https://localhost:3000\"]"
+                },
+                {
+                  "key": "GATE_CLIENT_PORT",
+                  "value": "19080"
+                },
+                {
+                  "key": "GATE_CLIENT_SCHEME",
+                  "value": "http"
+                },
+                {
+                  "key": "DB_CONFIG_PATH",
+                  "value": "repository/database/configdb.db"
+                },
+                {
+                  "key": "DB_RUNTIME_PATH",
+                  "value": "repository/database/runtimedb.db"
+                },
+                {
+                  "key": "DB_USER_PATH",
+                  "value": "repository/database/userdb.db"
+                },
+                {
+                  "key": "CRYPTO_ENCRYPTION_KEY",
+                  "value": "file://repository/resources/security/crypto.key"
+                }
+              ],
+              "files": [
+                {
+                  "key": "wso2_cloud_theme.yaml",
+                  "mountPath": "/opt/thunder/repository/resources/themes",
+                  "value": "id: \"d1e2f3a4-b5c6-7890-abcd-theme0000001\"\ndisplayName: \"WSO2 Cloud Theme new 123\"\ndescription: \"Default theme for WSO2 Cloud login pages\"\ntheme:\n  direction: \"ltr\"\n  defaultColorScheme: \"light\"\n  colorSchemes:\n    light:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#1a1a2e\"\n          dark: \"#0d0d1a\"\n          contrastText: \"#ffffff\"\n        background:\n          default: \"#f7f8fb\"\n          paper: \"#ffffff\"\n        text:\n          primary: \"#000000\"\n          secondary: \"#494848\"\n    dark:\n      colors:\n        primary:\n          main: \"#fa7b3f\"\n          dark: \"#e74420\"\n          contrastText: \"#ffffff\"\n        secondary:\n          main: \"#ff9966\"\n          dark: \"#fa7b3f\"\n          contrastText: \"#000000\"\n        background:\n          default: \"#121212\"\n          paper: \"#1e1e1e\"\n        text:\n          primary: \"#ffffff\"\n          secondary: \"#cccccc\"\n  shape:\n    borderRadius: 8\n  typography:\n    fontFamily: \"'Inter Variable', sans-serif\"\n    h1:\n      fontSize: \"1.75rem\"\n      fontWeight: 600\n      lineHeight: 1.3\n"
+                },
+                {
+                  "key": "test_app.yaml",
+                  "mountPath": "/opt/thunder/repository/resources/applications",
+                  "value": "id: \"c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f\"\nname: \"WSO2 Cloud Console\"\ndescription: \"WSO2 Cloud Console frontend application\"\nurl: \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080\"\nlogo_url: \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/assets/logo.svg\"\nis_registration_flow_enabled: false\ncertificate:\n  type: \"NONE\"\n  value: \"\"\ninbound_auth_config:\n  - type: \"oauth2\"\n    config:\n      client_id: \"CLOUD_CONSOLE\"\n      redirect_uris:\n        - \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback\"\n        - \"http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback\"\n      grant_types:\n        - \"authorization_code\"\n        - \"refresh_token\"\n      response_types:\n        - \"code\"\n      token_endpoint_auth_method: \"none\"\n      pkce_required: true\n      public_client: true\n      token:\n        access_token:\n          validity_period: 3600\n          user_attributes:\n            - \"given_name\"\n            - \"family_name\"\n            - \"email\"\n            - \"groups\"\n            - \"name\"\n            - \"roles\"\n            - \"ouId\"\n            - \"ouName\"\n            - \"ouHandle\"\n        id_token:\n          validity_period: 3600\n          user_attributes:\n            - \"given_name\"\n            - \"family_name\"\n            - \"email\"\n            - \"groups\"\n            - \"name\"\n            - \"ouId\"\n            - \"ouName\"\n            - \"ouHandle\"\n      scope_claims:\n        profile:\n          - \"name\"\n          - \"given_name\"\n          - \"family_name\"\n          - \"picture\"\n          - \"ouId\"\n          - \"ouName\"\n          - \"ouHandle\"\n        email:\n          - \"email\"\n          - \"email_verified\"\n        phone:\n          - \"phone_number\"\n          - \"phone_number_verified\"\n        group:\n          - \"groups\"\nallowed_user_types:\n  - \"Customer\"\n"
+                }
+              ],
+              "image": "ghcr.io/asgardeo/thunder:latest"
+            },
+            "endpoints": {
+              "api": {
+                "displayName": "Thunder API",
+                "port": 8090,
+                "type": "HTTP",
+                "visibility": [
+                  "external"
+                ]
+              }
+            }
           }
         }
       }
@@ -1355,7 +1936,7 @@
       "gvk": "openchoreo.dev/v1alpha1/ClusterComponentType",
       "namespace": "",
       "name": "thunder",
-      "filePath": "/Users/ayeshaj/Documents/SRE/thunder/repos/thunder-githops/namespaces/thunder-idp/components/thunder/component-type.yaml",
+      "filePath": "/home/runner/work/thunder-githops/thunder-githops/namespaces/thunder-idp/components/thunder/component-type.yaml",
       "object": {
         "apiVersion": "openchoreo.dev/v1alpha1",
         "kind": "ClusterComponentType",
@@ -1807,6 +2388,6 @@
       }
     }
   ],
-  "repoPath": "/Users/ayeshaj/Documents/SRE/thunder/repos/thunder-githops/namespaces/thunder-idp/components/thunder",
+  "repoPath": "/home/runner/work/thunder-githops/thunder-githops/namespaces/thunder-idp/components/thunder",
   "commitSHA": ""
 }

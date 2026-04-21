@@ -1,0 +1,98 @@
+name: Promote ComponentRelease
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment to promote to"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      namespace:
+        description: "OC namespace (e.g. thunder-idp)"
+        required: true
+        default: "thunder-idp"
+      component:
+        description: "Component name (e.g. thunder)"
+        required: true
+        default: "thunder"
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve source and target
+        id: resolve
+        run: |
+          COMPONENT_DIR="namespaces/${{ github.event.inputs.namespace }}/components/${{ github.event.inputs.component }}"
+
+          if [ "${{ github.event.inputs.environment }}" = "staging" ]; then
+            # Promote dev → staging: read releaseName from dev release-binding
+            SOURCE_FILE="$COMPONENT_DIR/release-binding.yaml"
+            TARGET_FILE="$COMPONENT_DIR/release-binding-staging.yaml"
+            SOURCE_ENV="development"
+            TARGET_ENV="staging"
+          else
+            # Promote staging → production: read releaseName from staging release-binding
+            SOURCE_FILE="$COMPONENT_DIR/release-binding-staging.yaml"
+            TARGET_FILE="$COMPONENT_DIR/release-binding-prod.yaml"
+            SOURCE_ENV="staging"
+            TARGET_ENV="production"
+          fi
+
+          RELEASE_NAME=$(awk '/^  releaseName:/{print $2; exit}' "$SOURCE_FILE")
+
+          if [ -z "$RELEASE_NAME" ]; then
+            echo "ERROR: No releaseName found in $SOURCE_FILE"
+            exit 1
+          fi
+
+          echo "source_env=$SOURCE_ENV" >> $GITHUB_OUTPUT
+          echo "target_env=$TARGET_ENV" >> $GITHUB_OUTPUT
+          echo "target_file=$TARGET_FILE" >> $GITHUB_OUTPUT
+          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          echo "component_dir=$COMPONENT_DIR" >> $GITHUB_OUTPUT
+          echo "Promoting $RELEASE_NAME from $SOURCE_ENV → $TARGET_ENV"
+
+      - name: Update target ReleaseBinding
+        run: |
+          sed -i "s/^  releaseName:.*/  releaseName: ${{ steps.resolve.outputs.release_name }}/" \
+            "${{ steps.resolve.outputs.target_file }}"
+          echo "Updated ${{ steps.resolve.outputs.target_file }} → releaseName: ${{ steps.resolve.outputs.release_name }}"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: promote/${{ github.event.inputs.component }}-${{ steps.resolve.outputs.target_env }}-${{ steps.resolve.outputs.release_name }}
+          base: main
+          commit-message: "chore(${{ github.event.inputs.component }}): promote ${{ steps.resolve.outputs.release_name }} to ${{ steps.resolve.outputs.target_env }}"
+          title: "promote(${{ github.event.inputs.component }}): ${{ steps.resolve.outputs.release_name }} → ${{ steps.resolve.outputs.target_env }}"
+          body: |
+            ## Promotion Request
+
+            | Field | Value |
+            |---|---|
+            | **Component** | `${{ github.event.inputs.component }}` |
+            | **Release** | `${{ steps.resolve.outputs.release_name }}` |
+            | **From** | `${{ steps.resolve.outputs.source_env }}` |
+            | **To** | `${{ steps.resolve.outputs.target_env }}` |
+
+            ### What happens when merged
+            Flux reconciles the updated `${{ steps.resolve.outputs.target_file }}` and OC deploys
+            `${{ steps.resolve.outputs.release_name }}` to the `${{ steps.resolve.outputs.target_env }}` environment.
+
+            ### Review checklist
+            - [ ] Verify this release is stable in `${{ steps.resolve.outputs.source_env }}`
+            - [ ] Confirm env-specific configs (URLs, replicas) are correct for `${{ steps.resolve.outputs.target_env }}`
+            - [ ] Merge to trigger deployment
+          labels: promotion,${{ steps.resolve.outputs.target_env }}

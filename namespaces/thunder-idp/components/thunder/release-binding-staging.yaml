@@ -1,0 +1,21 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: ReleaseBinding
+metadata:
+  name: thunder-staging
+  namespace: thunder-idp
+spec:
+  owner:
+    componentName: thunder
+    projectName: identity-platform
+  environment: staging
+  releaseName: ""
+  state: Active
+  componentTypeEnvironmentConfigs:
+    replicas: 1
+    endpointVisibility: "external"
+    serverPublicUrl: "http://staging-thunder-thunder-idp.openchoreoapis.localhost:19080"
+    gateClientHostname: "staging-thunder-thunder-idp.openchoreoapis.localhost"
+    resourceRequestsCpu: "100m"
+    resourceRequestsMemory: "128Mi"
+    resourceLimitsCpu: "500m"
+    resourceLimitsMemory: "512Mi"

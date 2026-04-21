@@ -1,0 +1,21 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: ReleaseBinding
+metadata:
+  name: thunder-prod
+  namespace: thunder-idp
+spec:
+  owner:
+    componentName: thunder
+    projectName: identity-platform
+  environment: production
+  releaseName: ""
+  state: Active
+  componentTypeEnvironmentConfigs:
+    replicas: 3
+    endpointVisibility: "external"
+    serverPublicUrl: "http://production-thunder-thunder-idp.openchoreoapis.localhost:19080"
+    gateClientHostname: "production-thunder-thunder-idp.openchoreoapis.localhost"
+    resourceRequestsCpu: "500m"
+    resourceRequestsMemory: "512Mi"
+    resourceLimitsCpu: "1000m"
+    resourceLimitsMemory: "1Gi"
