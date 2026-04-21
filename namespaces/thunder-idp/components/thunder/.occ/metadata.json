@@ -1,63 +1,68 @@
 {
-  "directoryHash": "e9102e1af8a8d6c3d217c295a1d715e96bd73da7b867894a6df7dd0a79bb3da1",
+  "directoryHash": "3b2cb195446e83b495c9800c938b2beb0076705ca667af0452334c6387381364",
   "fileStates": {
     "component-release.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 20831,
       "hash": "3980f0473394bc637c59d6509077ce152ff083d5008aa08db1871a02f5c0d7cc"
     },
     "component-type.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 17387,
       "hash": "b8c075a61f372d52bd7bbb7d6d4d850940ae7600489db2f1a8629ec99e667490"
     },
     "component.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 690,
       "hash": "7d672017ced4b64e6e207775fe810d35da339eb92a18027aaa0ba7b9b5e9150e"
     },
     "kustomization.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 228,
-      "hash": "cb3c04caa5ef48ec32b362317c5aaeb5884bbfe176511a10f977ad463c94ea69"
+      "hash": "143ddecc99a43583bc538a5583a2a68ffe73b4c2da16ceb07e4f3ca15f022378"
     },
     "release-binding-prod.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 641,
       "hash": "80ce749b4e15be60aa7da3428723815be7fba661b3af7d2d285e7a64b53a7573"
     },
     "release-binding-staging.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 636,
       "hash": "3ad559ef88b8bea7e59153a6044d5b4ab00cfb2c6f869e368135714f3a62d343"
     },
     "release-binding.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 660,
-      "hash": "63f1164ccce0cc8c5007dbc7af6fa4cf1a0ad703ba39bf07b81cd4ee568f8721"
+      "hash": "73f3674932754cb9ae342f65faf4eb4402380984f79f96b2adf8fa57b4b6a16d"
     },
     "thunder-20260421-1.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 23279,
       "hash": "f75246bdeb99816fe9d07d57e66110bfd5c9443064c58f3ab39a19695b1a7d8b"
     },
     "thunder-20260421-2.yaml": {
-      "modTime": "2026-04-21T08:49:34.128209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 23288,
       "hash": "5811b484c23c682830eae912283033dded9012c3ea67eae62d83559ad1c841c0"
     },
     "thunder-20260421-3.yaml": {
-      "modTime": "2026-04-21T08:49:34.129209449Z",
+      "modTime": "2026-04-21T09:48:01.777309007Z",
       "size": 28422,
       "hash": "a94e990ba02f31bc44c9d0d0bec552fedf920a764da9e8cd77f09852e8711812"
     },
+    "thunder-20260421-4.yaml": {
+      "modTime": "2026-04-21T09:48:01.777685449Z",
+      "size": 30146,
+      "hash": "8cafc7678da8114f5e8225dd451855e123370a6b6a78d3a2e3d4b39ebc7e84a9"
+    },
     "workload.yaml": {
-      "modTime": "2026-04-21T08:49:34.129209449Z",
+      "modTime": "2026-04-21T09:48:01.777685449Z",
       "size": 12813,
-      "hash": "cee7b1ac8d6d2d9e60ed09863b68f06a965d33daf20d7d3d024d7a4cd8aec614"
+      "hash": "e78ea63e5e8ef655dfe4e5280b7732d60afbd88baf6f1cc9ffd7b79e782021c0"
     }
   },
-  "createdAt": "2026-04-21T08:49:35.952365558Z",
-  "lastUsed": "2026-04-21T08:49:35.953869205Z",
-  "resourceCount": 10
+  "createdAt": "2026-04-21T09:48:04.374494882Z",
+  "lastUsed": "2026-04-21T09:48:04.376277579Z",
+  "resourceCount": 11
 }
