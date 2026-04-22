@@ -110,15 +110,12 @@ jobs:
           RELEASE_NAME="${{ steps.generate.outputs.release_name }}"
           NEW_FILE="${{ steps.generate.outputs.new_file }}"
 
-          # Find the current ComponentRelease entry in kustomization (component-release.yaml or date-named file)
-          OLD_CR=$(grep -E '\- (component-release|[a-z]+-[0-9]{8}-).*\.yaml' "$COMPONENT_DIR/kustomization.yaml" | awk '{print $2}')
-          if [ -n "$OLD_CR" ]; then
-            sed -i "s|  - $OLD_CR|  - $NEW_FILE|" "$COMPONENT_DIR/kustomization.yaml"
-            echo "Replaced $OLD_CR with $NEW_FILE in kustomization.yaml"
-          else
-            # No existing entry found, append it before release-binding
+          # Add new ComponentRelease file to kustomization (keep old ones — staging/prod may still reference them)
+          if ! grep -q "$NEW_FILE" "$COMPONENT_DIR/kustomization.yaml"; then
             sed -i "s|  - release-binding.yaml|  - $NEW_FILE\n  - release-binding.yaml|" "$COMPONENT_DIR/kustomization.yaml"
             echo "Added $NEW_FILE to kustomization.yaml"
+          else
+            echo "$NEW_FILE already in kustomization.yaml, skipping"
           fi
 
           # Update ReleaseBinding to point to new release
