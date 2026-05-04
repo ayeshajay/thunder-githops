@@ -522,12 +522,12 @@ spec:
       - key: CRYPTO_ENCRYPTION_KEY
         value: file://repository/resources/security/crypto.key
       files:
-      - key: wso2_cloud_theme_v2.yaml
+      - key: wso2_theme_v2.yaml
         mountPath: /opt/thunder/repository/resources/themes
         value: |
           id: "d1e2f3a4-b5c6-7890-abcd-theme0000002"
-          displayName: "WSO2 Cloud Theme V6"
-          description: "Default theme for WSO2 Cloud login pages"
+          displayName: "WSO2 Theme V6"
+          description: "Default theme for WSO2 login pages"
           theme:
             direction: "ltr"
             defaultColorScheme: "light"
@@ -572,12 +572,12 @@ spec:
                 fontSize: "1.75rem"
                 fontWeight: 600
                 lineHeight: 1.3
-      - key: wso2_cloud_theme.yaml
+      - key: wso2_theme.yaml
         mountPath: /opt/thunder/repository/resources/themes
         value: |
           id: "d1e2f3a4-b5c6-7890-abcd-theme0000001"
-          displayName: "WSO2 Cloud Theme"
-          description: "Default theme for WSO2 Cloud login pages"
+          displayName: "WSO2 Theme"
+          description: "Default theme for WSO2 login pages"
           theme:
             direction: "ltr"
             defaultColorScheme: "light"
@@ -626,8 +626,8 @@ spec:
         mountPath: /opt/thunder/repository/resources/flows
         value: |
           id: "f6a7b8c9-d0e1-2345-fabc-678901234567"
-          handle: auth_flow_config_wso2_cloud_disambiguation
-          name: WSO2 Cloud Authentication Flow with Disambiguation
+          handle: auth_flow_config_wso2_disambiguation
+          name: WSO2 Authentication Flow with Disambiguation
           flowType: AUTHENTICATION
           nodes:
             - id: start
@@ -642,7 +642,7 @@ spec:
                   - align: center
                     type: TEXT
                     id: text_001
-                    label: "Sign in to WSO2 Cloud"
+                    label: "Sign in to WSO2"
                     variant: HEADING_1
                   - type: BLOCK
                     id: block_001

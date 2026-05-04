@@ -381,12 +381,12 @@ spec:
         - key: CRYPTO_ENCRYPTION_KEY
           value: "file://repository/resources/security/crypto.key"
       files:
-        - key: wso2_cloud_theme.yaml
+        - key: wso2_theme.yaml
           mountPath: /opt/thunder/repository/resources/themes
           value: |
             id: "d1e2f3a4-b5c6-7890-abcd-theme0000001"
-            displayName: "WSO2 Cloud Theme new 123"
-            description: "Default theme for WSO2 Cloud login pages"
+            displayName: "WSO2 Theme new 123"
+            description: "Default theme for WSO2 login pages"
             theme:
               direction: "ltr"
               defaultColorScheme: "light"
@@ -435,8 +435,8 @@ spec:
           mountPath: /opt/thunder/repository/resources/applications
           value: |
             id: "c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f"
-            name: "WSO2 Cloud Console"
-            description: "WSO2 Cloud Console frontend application"
+            name: "WSO2 Console"
+            description: "WSO2 Console frontend application"
             url: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080"
             logo_url: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/assets/logo.svg"
             is_registration_flow_enabled: false
@@ -446,7 +446,7 @@ spec:
             inbound_auth_config:
               - type: "oauth2"
                 config:
-                  client_id: "CLOUD_CONSOLE"
+                  client_id: "CONSOLE"
                   redirect_uris:
                     - "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback"
                     - "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback"
