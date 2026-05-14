@@ -2,7 +2,7 @@ apiVersion: openchoreo.dev/v1alpha1
 kind: Environment
 metadata:
   name: production
-  namespace: thunder-idp
+  namespace: thunderid
   annotations:
     openchoreo.dev/description: "Production environment for identity platform"
     openchoreo.dev/display-name: "Production"

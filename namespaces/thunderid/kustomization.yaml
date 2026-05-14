@@ -6,4 +6,4 @@ resources:
   - environments/development.yaml
   - environments/staging.yaml
   - environments/production.yaml
-  - components/thunder
+  - components/thunderid

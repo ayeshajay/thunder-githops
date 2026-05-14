@@ -20,7 +20,7 @@
 apiVersion: openchoreo.dev/v1alpha1
 kind: ClusterComponentType
 metadata:
-  name: thunder
+  name: thunderid
   annotations:
     openchoreo.dev/description: "Thunder ComponentType"
     openchoreo.dev/display-name: "Thunder"
@@ -78,6 +78,9 @@ spec:
         gateClientHostname:
           type: string
           default: ""
+        consoleRedirectUris:
+          type: string
+          default: '["http://localhost:8090/console"]'
         # Infra resource configuration for the Thunder deployment container.
         resourceRequestsCpu:
           type: string
@@ -109,60 +112,6 @@ spec:
           resources:
             requests:
               storage: "${parameters.runtime.dbStorageSize}"
-
-    - id: setup-job
-      template:
-        apiVersion: batch/v1
-        kind: Job
-        metadata:
-          name: "${metadata.componentName}-setup"
-          namespace: "${metadata.namespace}"
-        spec:
-          backoffLimit: 3
-          ttlSecondsAfterFinished: 300
-          template:
-            spec:
-              restartPolicy: OnFailure
-              initContainers:
-                - name: init-database
-                  image: "${parameters.image}"
-                  imagePullPolicy: "${parameters.runtime.imagePullPolicy}"
-                  command: ['sh', '-c']
-                  args:
-                    - |
-                      if [ ! -f /data/.initialized ]; then
-                        echo "Copying database directory from image..."
-                        cp -r /opt/thunder/repository/database/* /data/
-                        touch /data/.initialized
-                        echo "Database initialization complete"
-                      else
-                        echo "Database already initialized"
-                      fi
-                  volumeMounts:
-                    - name: sqlite-data
-                      mountPath: /data
-              containers:
-                - name: setup
-                  image: "${parameters.image}"
-                  imagePullPolicy: "${parameters.runtime.imagePullPolicy}"
-                  command: ["sh", "-c", "./setup.sh && touch /opt/thunder/repository/database/.setup-complete"]
-                  env: |
-                    ${configurations.configs.envs.map(e, {"name": e.name, "value": e.value}) + [
-                      {"name": "WITH_CONSENT", "value": "false"}
-                    ]}
-                  volumeMounts:
-                    - name: thunder-config
-                      mountPath: /opt/thunder/repository/conf/deployment.yaml
-                      subPath: deployment.yaml
-                    - name: sqlite-data
-                      mountPath: /opt/thunder/repository/database
-              volumes:
-                - name: thunder-config
-                  configMap:
-                    name: "${metadata.componentName}-config"
-                - name: sqlite-data
-                  persistentVolumeClaim:
-                    claimName: "${metadata.componentName}-sqlite"
 
     - id: thunder-config
       includeWhen: "${parameters.runtime.dbType == 'sqlite'}"
@@ -320,7 +269,14 @@ spec:
           namespace: "${metadata.namespace}"
         data:
           config.js: |
-            window.__THUNDER_RUNTIME_CONFIG__ = {
+            window.__THUNDERID_RUNTIME_CONFIG__ = {
+              brand: {
+                product_name: 'ThunderID',
+                favicon: {
+                  light: 'assets/images/favicon.ico',
+                  dark: 'assets/images/favicon-inverted.ico',
+                },
+              },
               client: {
                 base: "${parameters.runtime.gate.clientBase}",
               },
@@ -338,7 +294,14 @@ spec:
           namespace: "${metadata.namespace}"
         data:
           config.js: |
-            window.__THUNDER_RUNTIME_CONFIG__ = {
+            window.__THUNDERID_RUNTIME_CONFIG__ = {
+              brand: {
+                product_name: 'ThunderID',
+                favicon: {
+                  light: 'assets/images/favicon.ico',
+                  dark: 'assets/images/favicon-inverted.ico',
+                },
+              },
               client: {
                 base: "${parameters.runtime.console.clientBase}",
                 client_id: "${parameters.runtime.console.clientId}",
@@ -380,30 +343,37 @@ spec:
                 app: "${metadata.componentName}"
             spec:
               initContainers:
-                - name: wait-for-setup
+                - name: init-database
                   image: "${parameters.image}"
                   imagePullPolicy: "${parameters.runtime.imagePullPolicy}"
                   command: ['sh', '-c']
                   args:
                     - |
-                      until [ -f /opt/thunder/repository/database/.setup-complete ]; do
-                        echo "Waiting for setup job to complete..."
-                        sleep 2
-                      done
-                      echo "Setup complete, starting Thunder..."
+                      if [ ! -f /data/.initialized ]; then
+                        echo "Copying database directory from image..."
+                        cp -r /opt/thunderid/repository/database/* /data/
+                        touch /data/.initialized
+                        echo "Database initialization complete"
+                      else
+                        echo "Database already initialized"
+                      fi
                   volumeMounts:
                     - name: sqlite-data
-                      mountPath: /opt/thunder/repository/database
+                      mountPath: /data
               containers:
                 - name: thunder
                   image: "${parameters.image}"
                   imagePullPolicy: "${parameters.runtime.imagePullPolicy}"
                   command:
-                    - /opt/thunder/thunder
+                    - ./start.sh
+                  args:
+                    - resources.yaml
                   ports:
                     - containerPort: ${workload.endpoints["api"].port}
                   env: |
-                    ${configurations.configs.envs.map(e, {"name": e.name, "value": e.value})}
+                    ${configurations.configs.envs.map(e, {"name": e.name, "value": e.value}) + [
+                      {"name": "CONSOLE_REDIRECT_URIS_0", "value": environmentConfigs.consoleRedirectUris}
+                    ]}
                   resources:
                     requests:
                       cpu: "${environmentConfigs.resourceRequestsCpu}"
@@ -413,10 +383,10 @@ spec:
                       memory: "${environmentConfigs.resourceLimitsMemory}"
                   volumeMounts: |
                     ${[
-                      {"name": "thunder-config", "mountPath": "/opt/thunder/repository/conf/deployment.yaml", "subPath": "deployment.yaml"},
-                      {"name": "gate-config", "mountPath": "/opt/thunder/apps/gate/config.js", "subPath": "config.js"},
-                      {"name": "console-config", "mountPath": "/opt/thunder/apps/console/config.js", "subPath": "config.js"},
-                      {"name": "sqlite-data", "mountPath": "/opt/thunder/repository/database"}
+                      {"name": "thunder-config", "mountPath": "/opt/thunderid/repository/conf/deployment.yaml", "subPath": "deployment.yaml"},
+                      {"name": "gate-config", "mountPath": "/opt/thunderid/apps/gate/config.js", "subPath": "config.js"},
+                      {"name": "console-config", "mountPath": "/opt/thunderid/apps/console/config.js", "subPath": "config.js"},
+                      {"name": "sqlite-data", "mountPath": "/opt/thunderid/repository/database"}
                     ] + configurations.toContainerVolumeMounts().map(m, {"name": m.name, "mountPath": m.mountPath, "subPath": m.subPath})}
               volumes: |
                 ${[

@@ -7,4 +7,4 @@ spec:
   interval: 1m
   url: https://github.com/ayeshajay/thunder-githops  # TODO: update to actual repo URL
   ref:
-    branch: main
+    branch: demo-v1

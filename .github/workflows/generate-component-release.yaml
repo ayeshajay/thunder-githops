@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       namespace:
-        description: "OC namespace (e.g. thunder-idp)"
+        description: "OC namespace (e.g. thunderid)"
         required: true
-        default: "thunder-idp"
+        default: "thunderid"
       project:
         description: "OC project name (e.g. identity-platform)"
         required: true

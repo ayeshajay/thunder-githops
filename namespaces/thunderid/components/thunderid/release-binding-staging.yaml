@@ -1,20 +1,20 @@
 apiVersion: openchoreo.dev/v1alpha1
 kind: ReleaseBinding
 metadata:
-  name: thunder-dev
-  namespace: thunder-idp
+  name: thunderid-staging
+  namespace: thunderid
 spec:
   owner:
-    componentName: thunder
+    componentName: thunderid
     projectName: identity-platform
-  environment: development
-  releaseName: thunder-20260422-1
+  environment: staging
+  releaseName: thunderid-20260421-7
   state: Active
   componentTypeEnvironmentConfigs:
     replicas: 1
     endpointVisibility: "external"
-    serverPublicUrl: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080"
-    gateClientHostname: "development-thunder-thunder-idp.openchoreoapis.localhost"
+    serverPublicUrl: "http://staging-thunderid-thunderid.openchoreoapis.demo:19080"
+    gateClientHostname: "staging-thunderid-thunderid.openchoreoapis.demo"
     resourceRequestsCpu: "100m"
     resourceRequestsMemory: "128Mi"
     resourceLimitsCpu: "500m"

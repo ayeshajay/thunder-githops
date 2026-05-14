@@ -2,7 +2,7 @@ apiVersion: openchoreo.dev/v1alpha1
 kind: DeploymentPipeline
 metadata:
   name: identity-platform-pipeline
-  namespace: thunder-idp
+  namespace: thunderid
   annotations:
     openchoreo.dev/description: "Deployment pipeline for identity platform"
     openchoreo.dev/display-name: "Identity Platform Pipeline"

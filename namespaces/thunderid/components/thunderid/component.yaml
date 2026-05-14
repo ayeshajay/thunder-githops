@@ -1,8 +1,8 @@
 apiVersion: openchoreo.dev/v1alpha1
 kind: Component
 metadata:
-  name: thunder
-  namespace: thunder-idp
+  name: thunderid
+  namespace: thunderid
   annotations:
     openchoreo.dev/description: "WSO2 Thunder Identity Management Service"
     openchoreo.dev/display-name: "Thunder"
@@ -11,9 +11,9 @@ spec:
     projectName: identity-platform
   componentType:
     kind: ClusterComponentType
-    name: deployment/thunder
+    name: deployment/thunderid
   parameters:
-    image: "ghcr.io/asgardeo/thunder:latest"
+    image: "ghcr.io/ayeshajay/thunderid:v0.38.0-hotfix-1"
     runtime:
       imagePullPolicy: "Always"
       gate:

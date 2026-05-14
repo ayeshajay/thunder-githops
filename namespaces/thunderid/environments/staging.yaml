@@ -2,7 +2,7 @@ apiVersion: openchoreo.dev/v1alpha1
 kind: Environment
 metadata:
   name: staging
-  namespace: thunder-idp
+  namespace: thunderid
   annotations:
     openchoreo.dev/description: "Staging environment for identity platform"
     openchoreo.dev/display-name: "Staging"

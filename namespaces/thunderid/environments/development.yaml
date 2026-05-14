@@ -2,7 +2,7 @@ apiVersion: openchoreo.dev/v1alpha1
 kind: Environment
 metadata:
   name: development
-  namespace: thunder-idp
+  namespace: thunderid
   annotations:
     openchoreo.dev/description: "Development environment for identity platform"
     openchoreo.dev/display-name: "Development"

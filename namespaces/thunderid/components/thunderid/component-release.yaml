@@ -2,14 +2,14 @@ apiVersion: openchoreo.dev/v1alpha1
 kind: ComponentRelease
 metadata:
   name: thunder-v8
-  namespace: thunder-idp
+  namespace: thunderid
 spec:
   owner:
     componentName: thunder
     projectName: identity-platform
   componentType:
     kind: ClusterComponentType
-    name: deployment/thunder
+    name: deployment/thunderid
     spec:
       workloadType: deployment
       parameters:
@@ -116,7 +116,7 @@ spec:
                       args:
                         - |
                           if [ ! -f /data/.initialized ]; then
-                            cp -r /opt/thunder/repository/database/* /data/
+                            cp -r /opt/thunderid/repository/database/* /data/
                             touch /data/.initialized
                           fi
                       volumeMounts:
@@ -126,14 +126,14 @@ spec:
                     - name: setup
                       image: "${parameters.image}"
                       imagePullPolicy: "${parameters.runtime.imagePullPolicy}"
-                      command: ["sh", "-c", "./setup.sh && touch /opt/thunder/repository/database/.setup-complete"]
+                      command: ["sh", "-c", "./setup.sh && touch /opt/thunderid/repository/database/.setup-complete"]
                       env: "${configurations.configs.envs.map(e, {\"name\": e.name, \"value\": e.value}) + [{\"name\": \"WITH_CONSENT\", \"value\": \"false\"}]}\n"
                       volumeMounts:
                         - name: thunder-config
-                          mountPath: /opt/thunder/repository/conf/deployment.yaml
+                          mountPath: /opt/thunderid/repository/conf/deployment.yaml
                           subPath: deployment.yaml
                         - name: sqlite-data
-                          mountPath: /opt/thunder/repository/database
+                          mountPath: /opt/thunderid/repository/database
                   volumes:
                     - name: thunder-config
                       configMap:
@@ -268,18 +268,18 @@ spec:
                       command: ["sh", "-c"]
                       args:
                         - |
-                          until [ -f /opt/thunder/repository/database/.setup-complete ]; do
+                          until [ -f /opt/thunderid/repository/database/.setup-complete ]; do
                             echo "Waiting for setup job..."
                             sleep 2
                           done
                       volumeMounts:
                         - name: sqlite-data
-                          mountPath: /opt/thunder/repository/database
+                          mountPath: /opt/thunderid/repository/database
                   containers:
                     - name: thunder
                       image: "${parameters.image}"
                       imagePullPolicy: "${parameters.runtime.imagePullPolicy}"
-                      command: ["/opt/thunder/thunder"]
+                      command: ["/opt/thunderid/thunder"]
                       ports:
                         - containerPort: "${workload.endpoints[\"api\"].port}"
                       env: "${configurations.configs.envs.map(e, {\"name\": e.name, \"value\": e.value})}\n"
@@ -290,7 +290,7 @@ spec:
                         limits:
                           cpu: "${environmentConfigs.resourceLimitsCpu}"
                           memory: "${environmentConfigs.resourceLimitsMemory}"
-                      volumeMounts: "${[{\"name\": \"thunder-config\", \"mountPath\": \"/opt/thunder/repository/conf/deployment.yaml\", \"subPath\": \"deployment.yaml\"}, {\"name\": \"gate-config\", \"mountPath\": \"/opt/thunder/apps/gate/config.js\", \"subPath\": \"config.js\"}, {\"name\": \"console-config\", \"mountPath\": \"/opt/thunder/apps/console/config.js\", \"subPath\": \"config.js\"}, {\"name\": \"sqlite-data\", \"mountPath\": \"/opt/thunder/repository/database\"}] + configurations.toContainerVolumeMounts().map(m, {\"name\": m.name, \"mountPath\": m.mountPath, \"subPath\": m.subPath})}\n"
+                      volumeMounts: "${[{\"name\": \"thunder-config\", \"mountPath\": \"/opt/thunderid/repository/conf/deployment.yaml\", \"subPath\": \"deployment.yaml\"}, {\"name\": \"gate-config\", \"mountPath\": \"/opt/thunderid/apps/gate/config.js\", \"subPath\": \"config.js\"}, {\"name\": \"console-config\", \"mountPath\": \"/opt/thunderid/apps/console/config.js\", \"subPath\": \"config.js\"}, {\"name\": \"sqlite-data\", \"mountPath\": \"/opt/thunderid/repository/database\"}] + configurations.toContainerVolumeMounts().map(m, {\"name\": m.name, \"mountPath\": m.mountPath, \"subPath\": m.subPath})}\n"
                   volumes: "${[{\"name\": \"thunder-config\", \"configMap\": {\"name\": metadata.componentName + \"-config\"}}, {\"name\": \"gate-config\", \"configMap\": {\"name\": metadata.componentName + \"-gate-config\"}}, {\"name\": \"console-config\", \"configMap\": {\"name\": metadata.componentName + \"-console-config\"}}, {\"name\": \"sqlite-data\", \"persistentVolumeClaim\": {\"claimName\": metadata.componentName + \"-sqlite\"}}] + configurations.toVolumes().map(v, {\"name\": v.name, \"configMap\": {\"name\": v.configMap.name}})}\n"
         - id: service
           targetPlane: dataplane
@@ -367,7 +367,7 @@ spec:
         - key: CONSOLE_SCOPES
           value: '["openid", "profile", "email", "system"]'
         - key: CORS_ALLOWED_ORIGINS
-          value: '["http://development-thunder-thunder-idp.openchoreoapis.localhost:19080", "https://localhost:3000"]'
+          value: '["http://development-thunder-thunderid.openchoreoapis.demo:19080", "https://localhost:3000"]'
         - key: GATE_CLIENT_PORT
           value: "19080"
         - key: GATE_CLIENT_SCHEME
@@ -382,7 +382,7 @@ spec:
           value: "file://repository/resources/security/crypto.key"
       files:
         - key: wso2_theme.yaml
-          mountPath: /opt/thunder/repository/resources/themes
+          mountPath: /opt/thunderid/repository/resources/themes
           value: |
             id: "d1e2f3a4-b5c6-7890-abcd-theme0000001"
             displayName: "WSO2 Theme new 123"
@@ -432,13 +432,13 @@ spec:
                   fontWeight: 600
                   lineHeight: 1.3
         - key: test_app.yaml
-          mountPath: /opt/thunder/repository/resources/applications
+          mountPath: /opt/thunderid/repository/resources/applications
           value: |
             id: "c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f"
             name: "WSO2 Console"
             description: "WSO2 Console frontend application"
-            url: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080"
-            logo_url: "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/assets/logo.svg"
+            url: "http://development-thunder-thunderid.openchoreoapis.demo:19080"
+            logo_url: "http://development-thunder-thunderid.openchoreoapis.demo:19080/assets/logo.svg"
             is_registration_flow_enabled: false
             certificate:
               type: "NONE"
@@ -448,8 +448,8 @@ spec:
                 config:
                   client_id: "CONSOLE"
                   redirect_uris:
-                    - "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback"
-                    - "http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/callback"
+                    - "http://development-thunder-thunderid.openchoreoapis.demo:19080/callback"
+                    - "http://development-thunder-thunderid.openchoreoapis.demo:19080/callback"
                   grant_types:
                     - "authorization_code"
                     - "refresh_token"

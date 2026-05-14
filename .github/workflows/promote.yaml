@@ -11,9 +11,9 @@ on:
           - staging
           - production
       namespace:
-        description: "OC namespace (e.g. thunder-idp)"
+        description: "OC namespace (e.g. thunderid)"
         required: true
-        default: "thunder-idp"
+        default: "thunderid"
       component:
         description: "Component name (e.g. thunder)"
         required: true

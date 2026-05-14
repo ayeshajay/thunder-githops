@@ -1,0 +1,22 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: ReleaseBinding
+metadata:
+  name: thunderid-dev
+  namespace: thunderid
+spec:
+  owner:
+    componentName: thunderid
+    projectName: identity-platform
+  environment: development
+  releaseName: thunderid-20260515-3
+  state: Active
+  componentTypeEnvironmentConfigs:
+    replicas: 1
+    endpointVisibility: "external"
+    serverPublicUrl: "http://development-thunderid-thunderid.openchoreoapis.demo:19080"
+    gateClientHostname: "development-thunderid-thunderid.openchoreoapis.demo"
+    consoleRedirectUris: "http://development-thunderid-thunderid.openchoreoapis.demo:19080/console"
+    resourceRequestsCpu: "100m"
+    resourceRequestsMemory: "128Mi"
+    resourceLimitsCpu: "500m"
+    resourceLimitsMemory: "512Mi"

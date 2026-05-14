@@ -64,9 +64,9 @@ After verifying changes in Development, trigger the manual promotion workflow to
 Map the following domains to `127.0.0.1` in your `/etc/hosts` (macOS/Linux) or `C:\Windows\System32\drivers\etc\hosts` (Windows) file:
 
 ```
-127.0.0.1  development-thunder-thunder-idp.openchoreoapis.localhost
-127.0.0.1  staging-thunder-thunder-idp.openchoreoapis.localhost
-127.0.0.1  production-thunder-thunder-idp.openchoreoapis.localhost
+127.0.0.1  development-thunder-thunder-idp.openchoreoapis.demo
+127.0.0.1  staging-thunder-thunder-idp.openchoreoapis.demo
+127.0.0.1  production-thunder-thunder-idp.openchoreoapis.demo
 ```
 
 ### Environment URLs
@@ -75,6 +75,6 @@ The consoles are accessible via the following links:
 
 | Environment | Access URL |
 |-------------|------------|
-| Development | http://development-thunder-thunder-idp.openchoreoapis.localhost:19080/console/ |
-| Staging     | http://staging-thunder-thunder-idp.openchoreoapis.localhost:19080/console/ |
-| Production  | http://production-thunder-thunder-idp.openchoreoapis.localhost:19080/console/ |
+| Development | http://development-thunder-thunder-idp.openchoreoapis.demo:19080/console/ |
+| Staging     | http://staging-thunder-thunder-idp.openchoreoapis.demo:19080/console/ |
+| Production  | http://production-thunder-thunder-idp.openchoreoapis.demo:19080/console/ |
