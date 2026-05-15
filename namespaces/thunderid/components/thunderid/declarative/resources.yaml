@@ -85,7 +85,7 @@ inbound_auth_config:
 id: 019e21b1-c42d-7f05-8ba3-887e194dcc15
 ou_id: 019e21b1-c402-7287-abda-46a759f37f25
 name: Sample App
-description: Sample application for testing
+description: Sample application for testing purposes
 url: https://localhost:3000
 logo_url: emoji:🎁
 tos_uri: https://localhost:3000/terms
