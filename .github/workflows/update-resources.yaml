@@ -1,0 +1,182 @@
+name: Update Resources and Generate ComponentRelease
+
+on:
+  push:
+    branches: [demo-v1]
+    paths:
+      - "namespaces/thunderid/components/thunderid/declarative/resources.yaml"
+  workflow_dispatch:
+
+jobs:
+  update-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install occ CLI
+        run: |
+          curl -L https://nightly.link/openchoreo/openchoreo/workflows/build-and-test/main/occ.zip -o occ.zip
+          unzip -p occ.zip linux/amd64/occ > occ
+          chmod +x occ
+          sudo mv occ /usr/local/bin/occ
+          rm -f occ.zip
+          occ version
+
+      - name: Configure occ context
+        run: |
+          mkdir -p ~/.openchoreo
+          cat > ~/.openchoreo/config <<EOF
+          currentContext: default
+          controlplanes:
+            - name: default
+              url: http://localhost:8080
+          credentials:
+            - name: default
+          contexts:
+            - name: default
+              controlplane: default
+              credentials: default
+              namespace: thunderid
+              project: identity-platform
+          EOF
+
+      - name: Inject resources.yaml into workload.yaml
+        run: |
+          COMPONENT_DIR="namespaces/thunderid/components/thunderid"
+          RESOURCES_FILE="$COMPONENT_DIR/declarative/resources.yaml"
+          WORKLOAD_FILE="$COMPONENT_DIR/workload.yaml"
+
+          # Write indented content to a temp file to avoid arg list too long
+          sed 's/^/          /' "$RESOURCES_FILE" > /tmp/resources_indented.txt
+
+          python3 <<'PYEOF'
+          workload_path = "namespaces/thunderid/components/thunderid/workload.yaml"
+
+          with open("/tmp/resources_indented.txt") as f:
+              new_lines = f.readlines()
+              new_lines = [l if l.endswith('\n') else l + '\n' for l in new_lines]
+
+          with open(workload_path) as f:
+              lines = f.readlines()
+
+          in_resources_key = False
+          value_line_indent = None
+          value_start = None
+          value_end = None
+
+          for i, line in enumerate(lines):
+              if '- key: resources.yaml' in line:
+                  in_resources_key = True
+              if in_resources_key and line.rstrip().endswith('value: |'):
+                  value_line_indent = len(line) - len(line.lstrip())
+                  value_start = i + 1
+                  # Block ends at first non-blank line with indent <= value_line_indent
+                  for j in range(value_start, len(lines)):
+                      l = lines[j]
+                      if l.strip() == '':
+                          continue
+                      indent = len(l) - len(l.lstrip())
+                      if indent <= value_line_indent:
+                          value_end = j
+                          break
+                  if value_end is None:
+                      value_end = len(lines)
+                  break
+
+          if value_start is None:
+              print("ERROR: Could not find resources.yaml value block")
+              exit(1)
+
+          print(f"Replacing lines {value_start}-{value_end} ({value_end - value_start} lines) with {len(new_lines)} lines")
+          new_content = lines[:value_start] + new_lines + lines[value_end:]
+
+          with open(workload_path, 'w') as f:
+              f.writelines(new_content)
+
+          print("Done")
+          PYEOF
+
+      - name: Generate ComponentRelease
+        id: generate
+        run: |
+          COMPONENT_DIR="namespaces/thunderid/components/thunderid"
+
+          # Snapshot existing release files
+          BEFORE=$(ls "$COMPONENT_DIR/releases/"*.yaml 2>/dev/null | sort || true)
+
+          cd "$COMPONENT_DIR"
+          occ componentrelease generate --all --mode file-system
+          cd "$GITHUB_WORKSPACE"
+
+          # Find newly generated file
+          AFTER=$(ls "$COMPONENT_DIR/releases/"*.yaml 2>/dev/null | sort || true)
+          NEW_FILE=$(comm -13 <(echo "$BEFORE") <(echo "$AFTER") | head -1)
+
+          if [ -z "$NEW_FILE" ]; then
+            echo "No new release generated (no changes detected)"
+            echo "skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          NEW_FILENAME=$(basename "$NEW_FILE")
+          RELEASE_NAME=$(awk '/^metadata:/{found=1} found && /^  name:/{print $2; exit}' "$NEW_FILE")
+
+          echo "new_file=$NEW_FILENAME" >> $GITHUB_OUTPUT
+          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          echo "skipped=false" >> $GITHUB_OUTPUT
+          echo "Generated ComponentRelease: $RELEASE_NAME ($NEW_FILENAME)"
+
+      - name: Update kustomization and ReleaseBinding
+        if: steps.generate.outputs.skipped != 'true'
+        run: |
+          COMPONENT_DIR="namespaces/thunderid/components/thunderid"
+          RELEASE_NAME="${{ steps.generate.outputs.release_name }}"
+          NEW_FILE="releases/${{ steps.generate.outputs.new_file }}"
+
+          # Replace the release file in kustomization with only the new one (remove old releases)
+          python3 - "$COMPONENT_DIR/kustomization.yaml" "$NEW_FILE" <<'PYEOF'
+          import sys, re
+
+          kustomization_path = sys.argv[1]
+          new_release = sys.argv[2]
+
+          with open(kustomization_path) as f:
+              content = f.read()
+
+          # Replace any existing releases/*.yaml line with the new one
+          new_content = re.sub(r'  - releases/[^\n]+', f'  - {new_release}', content)
+
+          # If no existing release line found, insert before release-binding.yaml
+          if new_content == content:
+              new_content = content.replace(
+                  '  - release-binding.yaml',
+                  f'  - {new_release}\n  - release-binding.yaml'
+              )
+
+          with open(kustomization_path, 'w') as f:
+              f.write(new_content)
+
+          print(f"Updated kustomization.yaml: → {new_release}")
+          PYEOF
+
+          # Update dev ReleaseBinding to point to new release
+          sed -i "s/^  releaseName:.*/  releaseName: $RELEASE_NAME/" "$COMPONENT_DIR/release-binding.yaml"
+          echo "Updated release-binding.yaml → releaseName: $RELEASE_NAME"
+
+      - name: Commit and push changes
+        if: steps.generate.outputs.skipped != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add namespaces/thunderid/components/thunderid/workload.yaml
+          git add namespaces/thunderid/components/thunderid/releases/
+          git add namespaces/thunderid/components/thunderid/kustomization.yaml
+          git add namespaces/thunderid/components/thunderid/release-binding.yaml
+
+          git commit -m "chore(thunderid): generate ComponentRelease ${{ steps.generate.outputs.release_name }}"
+          git push origin demo-v1
