@@ -138,14 +138,14 @@ spec:
                     - email_verified
                   group:
                     - groups
-
+          
           ---
           # File: Sample_App.yaml
           # resource_type: application
           id: 019e21b1-c42d-7f05-8ba3-887e194dcc15
           ou_id: 019e21b1-c402-7287-abda-46a759f37f25
           name: Sample App
-          description: Sample application for testing
+          description: Sample application for testing purposes
           url: https://localhost:3000
           logo_url: emoji:🎁
           tos_uri: https://localhost:3000/terms
@@ -219,7 +219,7 @@ spec:
                     - given_name
                     - family_name
                     - picture
-
+          
           ---
           # File: React_SDK_Sample.yaml
           # resource_type: application
@@ -298,7 +298,7 @@ spec:
                   email:
                     - email
                     - email_verified
-
+          
           ---
           # File: Console_App_Authentication_Flow.yaml
           # resource_type: flow
@@ -348,7 +348,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: Email_Link_Password_Recovery_Flow.yaml
           # resource_type: flow
@@ -520,7 +520,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: Console_App_Registration_Flow.yaml
           # resource_type: flow
@@ -621,7 +621,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: User_Onboarding_Flow.yaml
           # resource_type: flow
@@ -974,7 +974,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: Default_Basic_Authentication_Flow.yaml
           # resource_type: flow
@@ -1024,7 +1024,7 @@ spec:
           createdAt: 2026-05-13 14:15:57
           updatedAt: 2026-05-13 14:15:57
           isReadOnly: false
-
+          
           ---
           # File: Disambiguation_Login_Flow.yaml
           # resource_type: flow
@@ -1121,7 +1121,7 @@ spec:
           createdAt: 2026-05-13 14:15:57
           updatedAt: 2026-05-13 14:15:57
           isReadOnly: false
-
+          
           ---
           # File: Default_Basic_Registration_Flow.yaml
           # resource_type: flow
@@ -1205,7 +1205,7 @@ spec:
           createdAt: 2026-05-13 14:15:57
           updatedAt: 2026-05-13 14:15:57
           isReadOnly: false
-
+          
           ---
           # File: Default_SMS_Self-Invite_Registration_Flow.yaml
           # resource_type: flow
@@ -1325,7 +1325,7 @@ spec:
           createdAt: 2026-05-13 14:15:57
           updatedAt: 2026-05-13 14:15:57
           isReadOnly: false
-
+          
           ---
           # File: Customers.yaml
           # resource_type: organization_unit
@@ -1337,7 +1337,7 @@ spec:
           logo_url: emoji:🏛️
           created_at:
           updated_at:
-
+          
           ---
           # File: Default.yaml
           # resource_type: organization_unit
@@ -1349,7 +1349,7 @@ spec:
           logo_url: emoji:🏛️
           created_at:
           updated_at:
-
+          
           ---
           # File: System.yaml
           # resource_type: resource_server
@@ -1364,7 +1364,7 @@ spec:
             - name: System
               handle: system
               description: System resource
-
+          
           ---
           # File: Administrator.yaml
           # resource_type: role
@@ -1381,7 +1381,7 @@ spec:
               type: group
             - id: 019e21b1-bf14-709c-8e4e-125c63ac58ea
               type: user
-
+          
           ---
           # File: Acrylic_Orange.yaml
           # resource_type: theme
@@ -1393,7 +1393,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: Acrylic_Purple.yaml
           # resource_type: theme
@@ -1405,7 +1405,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: Classic.yaml
           # resource_type: theme
@@ -1417,7 +1417,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: High_Contrast.yaml
           # resource_type: theme
@@ -1429,7 +1429,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: Pale_Gray.yaml
           # resource_type: theme
@@ -1441,7 +1441,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: Pale_Indigo.yaml
           # resource_type: theme
@@ -1453,7 +1453,7 @@ spec:
           createdAt: 2026-05-13 14:15:58
           updatedAt: 2026-05-13 14:15:58
           isReadOnly: false
-
+          
           ---
           # File: en-US.yaml
           # resource_type: translation
@@ -1720,7 +1720,7 @@ spec:
               forms.complete.message: Your password has been successfully reset. You can now sign in with your new password.
               forms.new_password.subtitle: Enter a new password for your account
               forms.email_sent.message: We sent you a password reset link. Please check your inbox and click the link to reset your password.
-
+          
           ---
           # File: admin.yaml
           # resource_type: user
@@ -1738,7 +1738,7 @@ spec:
             picture: "https://example.com/avatar.jpg"
           credentials:
             password: "adminpassword"
-
+          
           ---
           # File: Customer.yaml
           # resource_type: user_type
@@ -1791,7 +1791,7 @@ spec:
                 "required": false
               }
             }
-
+          
           ---
           # File: Person.yaml
           # resource_type: user_type
